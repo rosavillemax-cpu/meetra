@@ -2,22 +2,17 @@
   "name": "meetra",
   "private": true,
   "scripts": {
-    "build": "cd apps/web && npm install && npm run build",
+    "build": "cd apps/web && npm run build",
     "dev": "cd apps/web && npm run dev",
-    "lint": "turbo run lint",
+    "lint": "cd apps/web && npm run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "check-types": "cd apps/web && npm run check-types"
   },
   "devDependencies": {
     "prettier": "^3.7.4",
-    "turbo": "^2.9.12",
     "typescript": "5.9.2"
   },
   "engines": {
     "node": ">=18"
-  },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+  }
 }
