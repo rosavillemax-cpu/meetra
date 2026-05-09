@@ -8,8 +8,19 @@ const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
 const prisma = globalForPrisma.prisma ?? new PrismaClient()
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
+// Trim newlines that Vercel sometimes appends to env values
+if (process.env.AUTH_URL) {
+  process.env.AUTH_URL = process.env.AUTH_URL.trim()
+}
+if (process.env.AUTH_GOOGLE_ID) {
+  process.env.AUTH_GOOGLE_ID = process.env.AUTH_GOOGLE_ID.trim()
+}
+if (process.env.AUTH_GOOGLE_SECRET) {
+  process.env.AUTH_GOOGLE_SECRET = process.env.AUTH_GOOGLE_SECRET.trim()
+}
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  secret: process.env.AUTH_SECRET,
+  secret: process.env.AUTH_SECRET?.trim(),
   adapter: PrismaAdapter(prisma),
   providers: [
     Google({
