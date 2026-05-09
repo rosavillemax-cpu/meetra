@@ -60,7 +60,7 @@ function SignInContent() {
       )}
 
       <button
-        onClick={() => signIn('google', { callbackUrl })}
+        onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
         style={{
           display: 'flex',
           alignItems: 'center',
