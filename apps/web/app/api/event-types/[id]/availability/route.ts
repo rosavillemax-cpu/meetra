@@ -86,7 +86,7 @@ export async function GET(
       const slotEndWithBuffer = addMinutes(slotEnd, eventType.bufferAfter)
 
       if (slotEnd <= end) {
-        const isAvailable = !existingBookings.some(booking => {
+        const isAvailable = !existingBookings.some((booking: { startAt: Date; endAt: Date }) => {
           const bookingStart = new Date(booking.startAt)
           const bookingEnd = new Date(booking.endAt)
           return (
