@@ -6,13 +6,15 @@ interface PageProps {
 }
 
 function getBaseUrl() {
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL
+  // Server-side: use absolute URL from AUTH_URL or VERCEL_URL
+  if (process.env.AUTH_URL) {
+    return process.env.AUTH_URL.trim()
   }
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`
   }
-  return ''
+  // Local dev
+  return 'http://localhost:3000'
 }
 
 async function getUser(handle: string) {

@@ -50,8 +50,7 @@ export default function BookingPage({
   const fetchData = useCallback(async (handle: string, slug: string) => {
     setLoading(true)
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
-      const res = await fetch(`${baseUrl}/api/users/${handle}`)
+      const res = await fetch(`/api/users/${handle}`)
       if (!res.ok) throw new Error('User not found')
       const userData = await res.json()
       setUser(userData)
@@ -72,8 +71,7 @@ export default function BookingPage({
 
   const fetchSlots = useCallback(async (eventTypeId: string, date: string) => {
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
-      const res = await fetch(`${baseUrl}/api/event-types/${eventTypeId}/availability?date=${date}`)
+      const res = await fetch(`/api/event-types/${eventTypeId}/availability?date=${date}`)
       const data = await res.json()
       setSlots(data.slots || [])
     } catch {
@@ -106,8 +104,7 @@ export default function BookingPage({
     setError('')
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
-      const res = await fetch(`${baseUrl}/api/bookings`, {
+      const res = await fetch(`/api/bookings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

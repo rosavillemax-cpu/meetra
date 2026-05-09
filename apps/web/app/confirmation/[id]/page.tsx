@@ -36,7 +36,7 @@ export default function ConfirmationPage() {
     const id = (params as { id: string }).id
     if (!id) return
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/bookings/${id}`)
+    fetch(`/api/bookings/${id}`)
       .then(res => {
         if (!res.ok) throw new Error('Rezervasyon bulunamadı')
         return res.json()
