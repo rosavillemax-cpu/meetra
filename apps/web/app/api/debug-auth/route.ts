@@ -1,13 +1,28 @@
 import { NextResponse } from 'next/server'
 
-// Temporary debug endpoint — remove after fixing auth
 export async function GET() {
+  const hasGoogleId = Boolean(process.env.AUTH_GOOGLE_ID)
+  const hasGoogleSecret = Boolean(process.env.AUTH_GOOGLE_SECRET)
+  const hasAuthSecret = Boolean(process.env.AUTH_SECRET)
+  const hasAuthUrl = Boolean(process.env.AUTH_URL)
+  const hasDatabaseUrl = Boolean(process.env.DATABASE_URL)
+
+  const googleIdValue = process.env.AUTH_GOOGLE_ID || ''
+  const googleSecretValue = process.env.AUTH_GOOGLE_SECRET ? '***' : ''
+  const authSecretValue = process.env.AUTH_SECRET ? '***' : ''
+  const dbUrlValue = process.env.DATABASE_URL ? '***' : ''
+
   return NextResponse.json({
-    hasSecret: !!process.env.AUTH_SECRET,
-    hasGoogleId: !!process.env.AUTH_GOOGLE_ID,
-    hasGoogleSecret: !!process.env.AUTH_GOOGLE_SECRET,
-    hasDbUrl: !!process.env.DATABASE_URL,
-    nodeEnv: process.env.NODE_ENV,
-    authUrl: process.env.AUTH_URL,
+    hasGoogleId,
+    hasGoogleSecret,
+    hasAuthSecret,
+    hasAuthUrl,
+    hasDatabaseUrl,
+    googleIdLength: googleIdValue.length,
+    googleSecretLength: googleSecretValue.length,
+    authSecretLength: authSecretValue.length,
+    authUrl: process.env.AUTH_URL || '',
+    dbUrlLength: dbUrlValue.length,
+    allOk: hasGoogleId && hasGoogleSecret && hasAuthSecret && hasAuthUrl && hasDatabaseUrl,
   })
 }
