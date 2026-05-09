@@ -5,8 +5,18 @@ interface PageProps {
   params: Promise<{ handle: string }>
 }
 
+function getBaseUrl() {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`
+  }
+  return ''
+}
+
 async function getUser(handle: string) {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
+  const baseUrl = getBaseUrl()
   const res = await fetch(`${baseUrl}/api/users/${handle}`, {
     cache: 'no-store'
   })

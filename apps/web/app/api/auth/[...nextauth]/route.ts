@@ -3,7 +3,7 @@ import Google from 'next-auth/providers/google'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { prisma } from '@/lib/prisma'
 
-const handler = NextAuth({
+const { handlers } = NextAuth({
   adapter: PrismaAdapter(prisma as any),
   providers: [
     Google({
@@ -34,4 +34,4 @@ const handler = NextAuth({
   trustHost: true,
 })
 
-export { handler as GET, handler as POST }
+export const { GET, POST } = handlers
