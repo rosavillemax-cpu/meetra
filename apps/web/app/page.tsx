@@ -16,7 +16,7 @@ export default function Home() {
               background: 'var(--text-primary)'
             }} />
             <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '0.875rem' }}>
-              Meetra
+              CallRoom
             </span>
           </div>
           <nav style={{ display: 'flex', gap: '1.5rem' }}>
@@ -46,7 +46,7 @@ export default function Home() {
             lineHeight: 1.7,
             marginBottom: '2rem'
           }}>
-            Meetra ile toplantı planlaması artık çok basit. Kendi randevu sayfanızı oluşturun, müsaitlik saatlerinizi ayarlayın ve gerisini Meetra'ya bırakın.
+            CallRoom ile toplantı planlaması artık çok basit. Kendi randevu sayfanızı oluşturun, müsaitlik saatlerinizi ayarlayın ve gerisini CallRoom'ya bırakın.
           </p>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
             <a
@@ -86,7 +86,7 @@ export default function Home() {
         textAlign: 'center'
       }}>
         <p style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>
-          Meetra — Kolay randevu planlama
+          CallRoom — Kolay randevu planlama
         </p>
       </footer>
     </div>
