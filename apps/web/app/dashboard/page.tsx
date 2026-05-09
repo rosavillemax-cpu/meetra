@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { LoginButton } from '@/components/LoginButton'
 
 export default function Dashboard() {
   return (
@@ -19,11 +20,7 @@ export default function Dashboard() {
               CallRoom
             </span>
           </Link>
-          <nav style={{ display: 'flex', gap: '1.5rem' }}>
-            <Link href="/" style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-              Ana Sayfa
-            </Link>
-          </nav>
+          <LoginButton />
         </div>
       </header>
 
