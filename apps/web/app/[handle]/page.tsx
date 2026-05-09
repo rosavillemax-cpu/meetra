@@ -28,6 +28,12 @@ async function getUser(handle: string) {
 
 export default async function UserPage({ params }: PageProps) {
   const { handle } = await params
+
+  // Prevent reserved paths from being treated as user handles
+  const RESERVED = ['api', 'auth', 'dashboard', 'confirmation', 'favicon.ico', '_next']
+  if (RESERVED.includes(handle)) {
+    notFound()
+  }
   const user = await getUser(handle)
 
   if (!user) {

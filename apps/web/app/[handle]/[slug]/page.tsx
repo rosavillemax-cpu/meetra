@@ -44,7 +44,15 @@ export default function BookingPage({
   const [error, setError] = useState('')
 
   useEffect(() => {
-    params.then(setResolved)
+    params.then((p) => {
+      const RESERVED = ['api', 'auth', 'dashboard', 'confirmation', '_next']
+      if (RESERVED.includes(p.handle)) {
+        setError('Kullanıcı veya etkinlik bulunamadı')
+        setLoading(false)
+        return
+      }
+      setResolved(p)
+    })
   }, [params])
 
   const fetchData = useCallback(async (handle: string, slug: string) => {
