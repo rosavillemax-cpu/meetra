@@ -17,12 +17,14 @@
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
+    "@prisma/client": "^6.19.3",
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
     "@types/node": "^22.15.3",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "eslint": "^9.39.1",
+    "prisma": "^6.19.3",
     "typescript": "5.9.2"
   }
 }

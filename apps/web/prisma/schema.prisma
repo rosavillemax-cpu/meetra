@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  handle    String   @unique
+  timezone  String   @default("Europe/Istanbul")
+  createdAt DateTime @default(now())
+
+  eventTypes        EventType[]
+  availabilityRules AvailabilityRule[]
+  bookingsAsHost    Booking[]
+}
+
+model EventType {
+  id           String  @id @default(uuid())
+  userId       String
+  slug         String
+  title        String
+  description  String?
+  durationMin  Int     @default(30)
+  bufferBefore Int     @default(0)
+  bufferAfter  Int     @default(0)
+  color        String  @default("#000000")
+  active       Boolean @default(true)
+
+  user     User      @relation(fields: [userId], references: [id])
+  bookings Booking[]
+
+  @@unique([userId, slug])
+}
+
+model AvailabilityRule {
+  id           String    @id @default(uuid())
+  userId       String
+  weekday      Int
+  startTime    String
+  endTime      String
+  isOverride   Boolean   @default(false)
+  overrideDate DateTime?
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Booking {
+  id          String   @id @default(uuid())
+  eventTypeId String
+  hostId      String
+  guestEmail  String
+  guestName   String
+  startAt     DateTime
+  endAt       DateTime
+  status      String   @default("confirmed")
+  answers     Json?
+  icalUid     String?
+  cancelToken String?  @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  eventType EventType @relation(fields: [eventTypeId], references: [id])
+  host      User      @relation(fields: [hostId], references: [id])
+}

@@ -1,0 +1,16 @@
+-- Migration: add_booking_fields_and_event_type_active
+-- Created: 2026-05-09
+
+BEGIN;
+
+ALTER TABLE "Booking" ADD COLUMN IF NOT EXISTS "answers" JSONB;
+ALTER TABLE "Booking" ADD COLUMN IF NOT EXISTS "icalUid" TEXT;
+ALTER TABLE "Booking" ADD COLUMN IF NOT EXISTS "cancelToken" TEXT;
+ALTER TABLE "Booking" ADD COLUMN IF NOT EXISTS "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT NOW();
+ALTER TABLE "Booking" ADD COLUMN IF NOT EXISTS "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW();
+ALTER TABLE "Booking" ADD CONSTRAINT "Booking_cancelToken_unique" UNIQUE ("cancelToken");
+
+ALTER TABLE "EventType" ADD COLUMN IF NOT EXISTS "description" TEXT;
+ALTER TABLE "EventType" ADD COLUMN IF NOT EXISTS "active" BOOLEAN NOT NULL DEFAULT true;
+
+COMMIT;
