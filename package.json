@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "cd apps/web && npm install && npm run build",
-    "dev": "turbo run dev",
+    "dev": "cd apps/web && npm run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
