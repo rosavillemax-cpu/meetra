@@ -23,6 +23,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (session.user && token.sub) {
         session.user.id = token.sub
       }
+      if (session.user?.id) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: session.user.id },
+          select: { name: true, image: true },
+        })
+        if (dbUser) {
+          if (session.user) {
+            session.user.name = dbUser.name
+            session.user.image = dbUser.image ?? null
+          }
+        }
+      }
       return session
     },
     async jwt({ token, user, account }) {
@@ -41,8 +53,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               },
             })
           }
-          if (dbUser && token.sub !== dbUser.id) {
-            token.sub = dbUser.id
+          if (dbUser) {
+            if (token.sub !== dbUser.id) token.sub = dbUser.id
+            if (token.name !== dbUser.name) token.name = dbUser.name
           }
         } catch (error) {
           console.error('Auth JWT callback error:', error)
