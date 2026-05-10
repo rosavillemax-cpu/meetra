@@ -176,7 +176,7 @@ export default async function DashboardPage() {
                 <rect x="22" y="46" width="13" height="10" rx="2" stroke="currentColor" strokeOpacity="0.4" />
               </svg>
               <p className="empty-title">Randevu yok</p>
-              <p className="empty-sub">Yaklaşan randevunuz bulunmuyor</p>
+              <p className="empty-sub">Yaklaşan randevunuz bulunmuyor.<br />İlk randevunuzu almak için müsaitlik ayarlarından başlayın.</p>
               <Link href="/dashboard/event-types" className="empty-cta">
                 Randevu tipi oluştur →
               </Link>
@@ -375,6 +375,11 @@ export default async function DashboardPage() {
         .day.today {
           background: var(--primary-bg);
           border-color: rgba(167,139,250,0.3);
+          animation: today-glow 3s ease-in-out infinite;
+        }
+        @keyframes today-glow {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(99,50,229,0.0); }
+          50% { box-shadow: 0 0 0 4px rgba(99,50,229,0.08); }
         }
         .day.busy:not(.today) {
           background: rgba(255,255,255,0.03);
@@ -544,6 +549,11 @@ export default async function DashboardPage() {
 
         /* Quick links */
         .ql-list { display: flex; flex-direction: column; }
+        .sidebar-col {
+          position: sticky;
+          top: 1.5rem;
+          align-self: start;
+        }
         .ql-item {
           display: flex;
           align-items: center;

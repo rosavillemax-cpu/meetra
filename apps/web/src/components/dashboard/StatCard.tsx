@@ -32,6 +32,7 @@ export function StatCard({ label, value, icon, accent = 'var(--primary)', sparkI
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
+          className="spark-path"
         />
       </svg>
 
@@ -89,6 +90,14 @@ export function StatCard({ label, value, icon, accent = 'var(--primary)', sparkI
           color: ${accent};
           display: block;
           opacity: 0.45;
+        }
+        .spark-path {
+          stroke-dasharray: 200;
+          stroke-dashoffset: 200;
+          animation: draw-spark 1.2s ease-out forwards;
+        }
+        @keyframes draw-spark {
+          to { stroke-dashoffset: 0; }
         }
       `}</style>
     </div>

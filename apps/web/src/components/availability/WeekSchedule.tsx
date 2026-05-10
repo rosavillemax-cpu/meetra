@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronLeft, ChevronRight, Plus } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Plus, EyeOff, Eye } from 'lucide-react'
 import type { AvailabilityRule } from '@prisma/client'
 
 const WEEKDAYS = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi']
@@ -18,9 +18,19 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
   const [selectedDay, setSelectedDay] = useState<number | null>(null)
   const [startTime, setStartTime] = useState('09:00')
   const [endTime, setEndTime] = useState('17:00')
+  const [closedDays, setClosedDays] = useState<Set<number>>(new Set())
 
   const getRulesForDay = (weekday: number) => {
     return rules.filter(r => r.weekday === weekday && !r.isOverride)
+  }
+
+  const toggleClosed = (weekday: number) => {
+    setClosedDays(prev => {
+      const next = new Set(prev)
+      if (next.has(weekday)) next.delete(weekday)
+      else next.add(weekday)
+      return next
+    })
   }
 
   const handleAddSlot = () => {
@@ -35,23 +45,33 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
         {WEEKDAYS.map((day, index) => {
           const dayRules = getRulesForDay(index)
           const isSelected = selectedDay === index
+          const isClosed = closedDays.has(index)
 
           return (
             <div
               key={day}
-              className={`day-column ${isSelected ? 'selected' : ''}`}
-              onClick={() => setSelectedDay(isSelected ? null : index)}
+              className={`day-column ${isSelected ? 'selected' : ''} ${isClosed ? 'closed' : ''}`}
+              onClick={() => !isClosed && setSelectedDay(isSelected ? null : index)}
             >
               <div className="day-header">
                 <span className="day-name">{day}</span>
-                <span className="day-count">{dayRules.length}</span>
+                <div className="day-header-right">
+                  <button
+                    className={`day-toggle ${isClosed ? 'is-closed' : ''}`}
+                    onClick={(e) => { e.stopPropagation(); toggleClosed(index); }}
+                    title={isClosed ? 'Günü aç' : 'Günü kapat'}
+                  >
+                    {isClosed ? <EyeOff size={12} /> : <Eye size={12} />}
+                  </button>
+                  <span className="day-count">{dayRules.length}</span>
+                </div>
               </div>
 
               <div className="day-slots">
                 {dayRules.map(rule => (
                   <div key={rule.id} className="time-slot">
                     <span className="slot-time">
-                      {rule.startTime} - {rule.endTime}
+                      {rule.startTime} — {rule.endTime}
                     </span>
                     {onDeleteRule && (
                       <button
@@ -65,7 +85,7 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
                 ))}
               </div>
 
-              {isSelected && (
+              {isSelected && !isClosed && (
                 <div className="day-add-form" onClick={e => e.stopPropagation()}>
                   <input
                     type="time"
@@ -73,7 +93,7 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
                     onChange={e => setStartTime(e.target.value)}
                     className="time-input"
                   />
-                  <span className="time-separator">-</span>
+                  <span className="time-separator">—</span>
                   <input
                     type="time"
                     value={endTime}
@@ -83,6 +103,23 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
                   <button onClick={handleAddSlot} className="add-slot-btn">
                     <Plus size={14} />
                   </button>
+                </div>
+              )}
+
+              {!isSelected && !isClosed && dayRules.length === 0 && (
+                <button
+                  className="add-slot-empty"
+                  onClick={(e) => { e.stopPropagation(); setSelectedDay(index); }}
+                >
+                  <Plus size={12} />
+                  Saat ekle
+                </button>
+              )}
+
+              {isClosed && (
+                <div className="closed-overlay">
+                  <EyeOff size={14} />
+                  <span>Gün kapalı</span>
                 </div>
               )}
             </div>
@@ -108,21 +145,32 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
           cursor: pointer;
           transition: all 0.15s;
           min-height: 200px;
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
         }
-        .day-column:hover {
+        .day-column:hover:not(.closed) {
           border-color: var(--text-tertiary);
         }
         .day-column.selected {
           border-color: var(--primary);
           background: var(--primary-bg);
         }
+        .day-column.closed {
+          opacity: 0.55;
+          cursor: default;
+        }
         .day-header {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          margin-bottom: 0.75rem;
           padding-bottom: 0.5rem;
           border-bottom: 1px solid var(--border);
+        }
+        .day-header-right {
+          display: flex;
+          align-items: center;
+          gap: 0.375rem;
         }
         .day-name {
           font-size: 0.8125rem;
@@ -136,10 +184,32 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
           padding: 0.125rem 0.375rem;
           border-radius: var(--radius-sm);
         }
+        .day-toggle {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 22px;
+          height: 22px;
+          border-radius: 5px;
+          border: none;
+          background: transparent;
+          color: var(--text-tertiary);
+          cursor: pointer;
+          transition: all 0.15s;
+        }
+        .day-toggle:hover {
+          background: var(--surface-hover);
+          color: var(--text-primary);
+        }
+        .day-toggle.is-closed {
+          color: var(--error);
+          background: var(--error-bg);
+        }
         .day-slots {
           display: flex;
           flex-direction: column;
           gap: 0.375rem;
+          flex: 1;
         }
         .time-slot {
           display: flex;
@@ -152,7 +222,7 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
         }
         .slot-time {
           color: var(--text-primary);
-          font-family: monospace;
+          font-family: 'DM Mono', monospace;
         }
         .slot-delete {
           width: 16px;
@@ -176,7 +246,6 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
           display: flex;
           align-items: center;
           gap: 0.25rem;
-          margin-top: 0.75rem;
           padding-top: 0.75rem;
           border-top: 1px solid var(--border);
         }
@@ -185,10 +254,10 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
           padding: 0.25rem 0.375rem;
           border: 1px solid var(--border);
           border-radius: var(--radius);
-          background: var(--background);
+          background: var(--surface);
           color: var(--text-primary);
           font-size: 0.75rem;
-          font-family: monospace;
+          font-family: 'DM Mono', monospace;
         }
         .time-separator {
           font-size: 0.75rem;
@@ -208,6 +277,38 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
         }
         .add-slot-btn:hover {
           opacity: 0.9;
+        }
+        .add-slot-empty {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.3rem;
+          width: 100%;
+          padding: 0.5rem;
+          border-radius: var(--radius);
+          border: 1.5px dashed var(--border);
+          background: transparent;
+          color: var(--text-tertiary);
+          font-size: 0.75rem;
+          cursor: pointer;
+          transition: all 0.15s;
+          margin-top: auto;
+        }
+        .add-slot-empty:hover {
+          border-color: var(--primary);
+          color: var(--primary);
+          background: var(--primary-bg);
+        }
+        .closed-overlay {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 0.375rem;
+          flex: 1;
+          color: var(--text-tertiary);
+          font-size: 0.75rem;
+          opacity: 0.7;
         }
       `}</style>
     </div>

@@ -3,7 +3,8 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
-import { LayoutDashboard, CalendarDays, Clock4, CalendarClock, Settings, type LucideIcon } from 'lucide-react'
+import { LayoutDashboard, CalendarDays, Clock4, CalendarClock, Settings, X, Menu, type LucideIcon } from 'lucide-react'
+import { useState } from 'react'
 import type { User } from 'next-auth'
 
 const navItems: { href: string; label: string; Icon: LucideIcon }[] = [
@@ -20,9 +21,59 @@ interface DashboardSidebarProps {
 
 export function DashboardSidebar({ user }: DashboardSidebarProps) {
   const pathname = usePathname()
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
     <>
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div className="mobile-overlay" onClick={() => setMobileOpen(false)} />
+      )}
+
+      {/* Mobile drawer sidebar */}
+      <aside className={`mobile-drawer ${mobileOpen ? 'open' : ''}`}>
+        <div className="drawer-header">
+          <Link href="/" className="brand" onClick={() => setMobileOpen(false)}>
+            <div className="brand-icon">C</div>
+            <span className="brand-name">Callroom</span>
+          </Link>
+          <button onClick={() => setMobileOpen(false)} className="drawer-close">
+            <X size={18} />
+          </button>
+        </div>
+
+        <nav className="drawer-nav">
+          {navItems.map(({ href, label, Icon }) => (
+            <Link
+              key={href}
+              href={href}
+              className={`nav-item ${pathname === href ? 'active' : ''}`}
+              onClick={() => setMobileOpen(false)}
+            >
+              <Icon size={16} className="nav-icon" />
+              <span className="nav-label">{label}</span>
+            </Link>
+          ))}
+        </nav>
+
+        <div className="drawer-footer">
+          {user && (
+            <div className="user-info">
+              {user.image && (
+                <img src={user.image} alt={user.name || ''} className="user-avatar" />
+              )}
+              <div className="user-details">
+                <span className="user-name">{user.name}</span>
+                <span className="user-email">{user.email}</span>
+              </div>
+            </div>
+          )}
+          <button onClick={() => signOut()} className="signout-btn">
+            Çıkış yap
+          </button>
+        </div>
+      </aside>
+
       {/* Desktop sidebar */}
       <aside className="sidebar">
         <div className="sidebar-header">
@@ -69,9 +120,14 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
           <div className="brand-icon">C</div>
           <span className="brand-name">Callroom</span>
         </Link>
-        {user?.image && (
-          <img src={user.image} alt={user.name || ''} className="mobile-avatar" />
-        )}
+        <div className="mobile-topbar-right">
+          {user?.image && (
+            <img src={user.image} alt={user.name || ''} className="mobile-avatar" />
+          )}
+          <button onClick={() => setMobileOpen(true)} className="hamburger-btn">
+            <Menu size={20} />
+          </button>
+        </div>
       </header>
 
       {/* Mobile bottom nav */}
@@ -214,10 +270,12 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
           font-size: 0.875rem;
           cursor: pointer;
           transition: all 0.15s;
+          opacity: 0.6;
         }
         .signout-btn:hover {
           background: var(--surface-hover);
           color: var(--text-primary);
+          opacity: 1;
         }
 
         /* ── Mobile ── */
@@ -243,12 +301,29 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
             top: 0;
             z-index: 40;
           }
+          .mobile-topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+          }
           .mobile-avatar {
             width: 32px;
             height: 32px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid var(--border);
+          }
+          .hamburger-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-primary);
+            cursor: pointer;
           }
           .mobile-nav {
             display: flex;
@@ -278,6 +353,64 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
           }
           .mobile-nav-item:hover {
             color: var(--text-primary);
+          }
+
+          /* Mobile overlay */
+          .mobile-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.35);
+            z-index: 50;
+            backdrop-filter: blur(2px);
+          }
+
+          /* Mobile drawer */
+          .mobile-drawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 280px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            z-index: 60;
+            display: flex;
+            flex-direction: column;
+            transform: translateX(-100%);
+            transition: transform 0.25s ease-out;
+          }
+          .mobile-drawer.open {
+            transform: translateX(0);
+          }
+          .drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+          }
+          .drawer-close {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius);
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+          }
+          .drawer-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            padding: 1rem 0.75rem;
+          }
+          .drawer-footer {
+            padding: 1rem 0.75rem;
+            border-top: 1px solid var(--border);
           }
         }
       `}</style>

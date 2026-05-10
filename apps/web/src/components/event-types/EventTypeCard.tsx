@@ -176,17 +176,19 @@ export function EventTypeCard({ eventType, onEdit, onDelete }: EventTypeCardProp
           display: flex;
           align-items: center;
           gap: 0.375rem;
-          padding: 0.375rem 0.75rem;
+          padding: 0.4rem 0.875rem;
           border-radius: var(--radius);
-          border: 1px solid var(--border);
-          background: transparent;
-          color: var(--text-primary);
-          font-size: 0.75rem;
+          border: 1px solid var(--primary);
+          background: var(--primary-bg);
+          color: var(--primary);
+          font-size: 0.8125rem;
+          font-weight: 500;
           cursor: pointer;
           transition: all 0.15s;
         }
         .copy-btn:hover {
-          background: var(--surface-hover);
+          background: var(--primary);
+          color: #fff;
         }
         .inactive-badge {
           position: absolute;
