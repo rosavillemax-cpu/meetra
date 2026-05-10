@@ -1,66 +1,32 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&family=Lora:wght@400;500;600&display=swap');
 
 :root {
-  /* Obsidian Dark — all dashboard components use these */
-  --bg:           #09090b;
-  --surface:      #18181b;
-  --surface2:     #27272a;
-  --border:       #27272a;
-  --border-hover: rgba(255,255,255,0.15);
-  --text-primary:   #fafafa;
-  --text-secondary: #a1a1aa;
-  --text-tertiary:  #52525b;
-
-  /* Accent / Primary */
-  --accent:      #a78bfa;
-  --accent-dim:  rgba(167,139,250,0.12);
-  --primary:     #a78bfa;
-  --primary-bg:  rgba(167,139,250,0.12);
-
-  /* Status */
-  --success:     #34d399;
-  --success-bg:  rgba(52,211,153,0.12);
-  --warning:     #fbbf24;
-  --warning-bg:  rgba(251,191,36,0.12);
-  --error:       #ef4444;
-  --error-bg:    rgba(239,68,68,0.12);
-
-  /* Legacy color aliases */
-  --blue:        #3a7bd5;
-  --blue-dim:    rgba(58,123,213,0.12);
-  --blue-text:   #7ab4f5;
-  --green-text:  #34d399;
-  --amber-text:  #fbbf24;
-  --red-text:    #f87171;
-
-  /* Form input background */
-  --background: #09090b;
-
-  /* Interactions */
-  --surface-hover: #27272a;
-
-  /* Shadow */
-  --shadow-sm: 0 1px 8px rgba(0,0,0,0.4);
-  --shadow-md: 0 4px 24px rgba(0,0,0,0.5);
-  --shadow-lg: 0 8px 40px rgba(0,0,0,0.6);
-
-  /* Radius */
-  --radius:    8px;
-  --radius-lg: 8px;
-  --radius-sm: 4px;
-
-  /* Obsidian Design System tokens (for landing page) */
-  --obs-bg:          #09090b;
-  --obs-surface-1:   #0c0c0f;
-  --obs-surface-2:   #18181b;
-  --obs-surface-3:   #27272a;
-  --obs-border:      #27272a;
-  --obs-text-1:      #fafafa;
-  --obs-text-2:      #a1a1aa;
-  --obs-violet:      #a78bfa;
-  --obs-violet-dim:  rgba(167, 139, 250, 0.12);
-  --obs-emerald:     #34d399;
-  --obs-radius-card: 8px;
+  --bg: #faf9f5;
+  --surface: #ffffff;
+  --surface2: #f5f4f0;
+  --surface-hover: #eeece7;
+  --border: rgba(0,0,0,0.07);
+  --border-hover: rgba(0,0,0,0.14);
+  --text-primary: #141413;
+  --text-secondary: #7a7873;
+  --text-tertiary: #b0aea5;
+  --accent: #141413;
+  --accent-dim: rgba(20,20,19,0.06);
+  --primary: #6332e5;
+  --primary-hover: #5529c9;
+  --primary-bg: rgba(99,50,229,0.08);
+  --success: #2d6a4f;
+  --success-bg: rgba(45,106,79,0.12);
+  --warning: #b45309;
+  --warning-bg: rgba(180,83,9,0.12);
+  --error: #991b1b;
+  --error-bg: rgba(153,27,27,0.12);
+  --radius: 12px;
+  --radius-lg: 20px;
+  --radius-sm: 8px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
 }
 
 *, *::before, *::after {
@@ -71,14 +37,14 @@
 
 html {
   scroll-behavior: smooth;
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
   background: var(--bg);
   color: var(--text-primary);
-  font-family: var(--font-geist-sans), 'DM Sans', sans-serif;
-  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
   line-height: 1.6;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
@@ -101,17 +67,175 @@ button {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-geist-sans), 'Syne', sans-serif;
+  font-family: 'Syne', sans-serif;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 
 code, pre {
-  font-family: var(--font-geist-mono), 'DM Mono', monospace;
+  font-family: 'DM Mono', monospace;
 }
 
 .container {
-  max-width: 1140px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem;
+}
+
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.dashboard-main {
+  flex: 1;
+  overflow-x: hidden;
+  margin-left: 280px;
+  background: var(--bg);
+}
+
+.dashboard-sidebar {
+  width: 280px;
+  min-height: 100vh;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.25rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.sidebar-header {
+  margin-bottom: 2.5rem;
+  padding: 0 0.5rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-dot {
+  width: 10px;
+  height: 10px;
+  background: var(--primary);
+  border-radius: 50%;
+}
+
+.brand-name {
+  font-family: 'Lora', serif;
+  font-weight: 600;
+  font-size: 1.375rem;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.875rem 1rem;
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.nav-item:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.nav-item.active {
+  background: var(--primary-bg);
+  color: var(--primary);
+}
+
+.nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+}
+
+.nav-label {
+  font-weight: 500;
+}
+
+.sidebar-footer {
+  padding: 0.75rem;
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  margin-bottom: 0.875rem;
+  padding: 0.5rem;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--surface2);
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.user-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-email {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.signout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.signout-btn:hover {
+  background: var(--error-bg);
+  border-color: var(--error);
+  color: var(--error);
 }
