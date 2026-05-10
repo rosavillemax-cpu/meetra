@@ -8,11 +8,8 @@ import { WeekStrip } from '@/components/dashboard/WeekStrip'
 import type { BookingWithRelations } from '@/components/dashboard/WeekStrip'
 
 function getGreeting(name: string | null | undefined, isReturning?: boolean) {
-  const h = new Date().getHours()
-  const timeGreeting = h < 12 ? 'Günaydın' : h < 18 ? 'İyi öğlenler' : 'İyi akşamlar'
-  const namePart = name ? `, ${name.split(' ')[0]}!` : '!'
-  const fullGreeting = isReturning ? `${timeGreeting}${namePart}` : `Hoş geldin${namePart}`
-  return fullGreeting
+  const firstName = name?.split(' ')[0] || 'there'
+  return isReturning ? `Welcome back, ${firstName}!` : `Welcome, ${firstName}!`
 }
 
 export default async function DashboardPage() {
@@ -40,10 +37,9 @@ export default async function DashboardPage() {
     prisma.booking.count({ where: { hostId: userId, startAt: { lt: new Date() }, status: 'confirmed' } })
   ])
 
-  const firstName = session.user.name?.split(' ')[0] ?? ''
   const todayStr = new Date().toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long' })
   const isReturning = (session.user as any)?.isReturning
-  const greeting = getGreeting(firstName, isReturning)
+  const greeting = getGreeting(session.user.name, isReturning)
 
   return (
     <div className="page">
@@ -55,7 +51,6 @@ export default async function DashboardPage() {
             <span className="pulse-dot" />
             {greeting}
           </div>
-          <h1>{firstName || 'Hoş geldin'}!</h1>
           <p className="date-str">{todayStr}</p>
         </div>
         <Link href="/dashboard/event-types" className="new-btn">
@@ -231,14 +226,13 @@ export default async function DashboardPage() {
           display: inline-flex;
           align-items: center;
           gap: 0.4rem;
-          padding: 0.2rem 0.65rem;
+          padding: 0.25rem 0.75rem;
           background: var(--primary-bg);
           border: 1px solid rgba(167,139,250,0.25);
           border-radius: 999px;
-          font-size: 0.725rem;
-          font-weight: 500;
+          font-size: 0.9375rem;
+          font-weight: 600;
           color: var(--primary);
-          margin-bottom: 0.625rem;
         }
         .pulse-dot {
           width: 5px;
@@ -250,13 +244,6 @@ export default async function DashboardPage() {
         @keyframes pulse {
           0%, 100% { opacity: 1; transform: scale(1); }
           50% { opacity: 0.45; transform: scale(0.8); }
-        }
-        .welcome h1 {
-          font-size: 1.875rem;
-          font-weight: 700;
-          letter-spacing: -0.03em;
-          margin: 0 0 0.2rem;
-          color: var(--text-primary);
         }
         .date-str {
           font-size: 0.8125rem;
