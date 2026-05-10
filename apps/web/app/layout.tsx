@@ -13,8 +13,8 @@ const geistMono = localFont({
 })
 
 export const metadata: Metadata = {
-  title: 'CallRoom - Kolay Randevu Planlama',
-  description: 'CallRoom ile toplantı planlaması artık çok basit. Kendi randevu sayfanızı oluşturun, müsaitlik saatlerinizi ayarlayın.',
+  title: 'Callroom — Schedule meetings effortlessly',
+  description: 'Share your Callroom link. Guests pick a time. It shows up in your calendar — no emails, no confusion.',
 }
 
 export default function RootLayout({
@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="tr">
+    <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <Providers>{children}</Providers>
       </body>

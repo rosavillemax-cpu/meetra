@@ -25,6 +25,19 @@
   --red-text: #f87171;
   --radius: 10px;
   --radius-lg: 16px;
+
+  /* Obsidian Design System */
+  --obs-bg:          #09090b;
+  --obs-surface-1:   #0c0c0f;
+  --obs-surface-2:   #18181b;
+  --obs-surface-3:   #27272a;
+  --obs-border:      #27272a;
+  --obs-text-1:      #fafafa;
+  --obs-text-2:      #a1a1aa;
+  --obs-violet:      #a78bfa;
+  --obs-violet-dim:  rgba(167, 139, 250, 0.12);
+  --obs-emerald:     #34d399;
+  --obs-radius-card: 8px;
 }
 
 *, *::before, *::after {
