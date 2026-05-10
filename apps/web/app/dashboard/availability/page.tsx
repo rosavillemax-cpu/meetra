@@ -13,15 +13,12 @@ export default function AvailabilityPage() {
     fetch('/api/me')
       .then(r => r.json())
       .then(data => {
-        if (data.id) {
-          setUserId(data.id)
-        }
+        if (data.id) setUserId(data.id)
       })
   }, [])
 
   useEffect(() => {
     if (!userId) return
-
     fetch(`/api/availability?userId=${userId}`)
       .then(r => r.json())
       .then(data => {
@@ -32,13 +29,11 @@ export default function AvailabilityPage() {
 
   const handleAddRule = async (weekday: number, startTime: string, endTime: string) => {
     if (!userId) return
-
     const res = await fetch('/api/availability', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, weekday, startTime, endTime })
     })
-
     if (res.ok) {
       const newRule = await res.json()
       setRules(prev => [...prev, newRule])
@@ -47,9 +42,7 @@ export default function AvailabilityPage() {
 
   const handleDeleteRule = async (rule: AvailabilityRule) => {
     const res = await fetch(`/api/availability/${rule.id}`, { method: 'DELETE' })
-    if (res.ok) {
-      setRules(prev => prev.filter(r => r.id !== rule.id))
-    }
+    if (res.ok) setRules(prev => prev.filter(r => r.id !== rule.id))
   }
 
   return (
@@ -80,7 +73,7 @@ export default function AvailabilityPage() {
       <style jsx>{`
         .availability-page {
           padding: 2rem;
-          max-width: 1000px;
+          max-width: 1100px;
         }
         .page-header {
           margin-bottom: 1.5rem;
@@ -89,6 +82,7 @@ export default function AvailabilityPage() {
           font-size: 1.5rem;
           font-weight: 600;
           margin: 0 0 0.25rem;
+          color: var(--text-primary);
         }
         .page-subtitle {
           color: var(--text-secondary);
@@ -111,6 +105,13 @@ export default function AvailabilityPage() {
           text-align: center;
           padding: 3rem;
           color: var(--text-tertiary);
+          font-size: 0.875rem;
+        }
+
+        @media (max-width: 640px) {
+          .availability-page {
+            padding: 1.25rem;
+          }
         }
       `}</style>
     </div>
