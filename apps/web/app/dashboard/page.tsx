@@ -43,7 +43,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="dashboard-overview">
-      <header className="page-header">
+      <div className="welcome-strip">
         <div>
           <h1>Hoş geldin{session.user.name ? `, ${session.user.name.split(' ')[0]}` : ''}!</h1>
           <p className="page-subtitle">Randevularınızı yönetin</p>
@@ -51,7 +51,7 @@ export default async function DashboardPage() {
         <Link href="/dashboard/event-types" className="create-btn">
           + Yeni randevu tipi
         </Link>
-      </header>
+      </div>
 
       <section className="stats-grid">
         <StatCard
@@ -128,20 +128,25 @@ export default async function DashboardPage() {
           padding: 2rem;
           max-width: 1200px;
         }
-        .page-header {
+        .welcome-strip {
           display: flex;
-          align-items: flex-start;
+          align-items: center;
           justify-content: space-between;
+          background: linear-gradient(135deg, rgba(167,139,250,0.08) 0%, transparent 70%);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-lg);
+          padding: 1.5rem 2rem;
           margin-bottom: 2rem;
         }
-        .page-header h1 {
-          font-size: 1.75rem;
+        .welcome-strip h1 {
+          font-size: 1.5rem;
           font-weight: 600;
           margin: 0 0 0.25rem;
         }
         .page-subtitle {
           color: var(--text-secondary);
           margin: 0;
+          font-size: 0.875rem;
         }
         .create-btn {
           padding: 0.625rem 1rem;

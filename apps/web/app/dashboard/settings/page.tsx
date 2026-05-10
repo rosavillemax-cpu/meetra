@@ -211,6 +211,13 @@ export default function SettingsPage() {
           background: var(--background);
           color: var(--text-primary);
           font-size: 0.9375rem;
+          transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+          outline: none;
+          border-color: var(--primary);
+          box-shadow: 0 0 0 2px var(--accent-dim);
         }
         .handle-input {
           display: flex;

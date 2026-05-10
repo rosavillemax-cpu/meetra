@@ -3,14 +3,15 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
+import { LayoutDashboard, CalendarDays, Clock4, CalendarClock, Settings, type LucideIcon } from 'lucide-react'
 import type { User } from 'next-auth'
 
-const navItems = [
-  { href: '/dashboard', label: 'Overview', icon: '◯' },
-  { href: '/dashboard/bookings', label: 'Randevular', icon: '◷' },
-  { href: '/dashboard/event-types', label: 'Randevu Tipleri', icon: '◬' },
-  { href: '/dashboard/availability', label: 'Müsaitlik', icon: '◭' },
-  { href: '/dashboard/settings', label: 'Ayarlar', icon: '◎' },
+const navItems: { href: string; label: string; Icon: LucideIcon }[] = [
+  { href: '/dashboard',              label: 'Overview',        Icon: LayoutDashboard },
+  { href: '/dashboard/bookings',     label: 'Randevular',      Icon: CalendarDays },
+  { href: '/dashboard/event-types',  label: 'Randevu Tipleri', Icon: Clock4 },
+  { href: '/dashboard/availability', label: 'Müsaitlik',       Icon: CalendarClock },
+  { href: '/dashboard/settings',     label: 'Ayarlar',         Icon: Settings },
 ]
 
 interface DashboardSidebarProps {
@@ -24,20 +25,20 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
     <aside className="sidebar">
       <div className="sidebar-header">
         <Link href="/" className="brand">
-          <div className="brand-dot" />
-          <span className="brand-name">CallRoom</span>
+          <div className="brand-icon">C</div>
+          <span className="brand-name">Callroom</span>
         </Link>
       </div>
 
       <nav className="sidebar-nav">
-        {navItems.map((item) => (
+        {navItems.map(({ href, label, Icon }) => (
           <Link
-            key={item.href}
-            href={item.href}
-            className={`nav-item ${pathname === item.href ? 'active' : ''}`}
+            key={href}
+            href={href}
+            className={`nav-item ${pathname === href ? 'active' : ''}`}
           >
-            <span className="nav-icon">{item.icon}</span>
-            <span className="nav-label">{item.label}</span>
+            <Icon size={16} className="nav-icon" />
+            <span className="nav-label">{label}</span>
           </Link>
         ))}
       </nav>
@@ -77,22 +78,30 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
         .brand {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.625rem;
           text-decoration: none;
           color: var(--text-primary);
         }
-        .brand-dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background: var(--text-primary);
+        .brand-icon {
+          width: 28px;
+          height: 28px;
+          background: rgba(167,139,250,0.12);
+          border: 1px solid rgba(167,139,250,0.25);
+          border-radius: 7px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-family: 'Syne', sans-serif;
+          font-weight: 700;
+          font-size: 0.875rem;
+          color: var(--primary);
+          flex-shrink: 0;
         }
         .brand-name {
           font-family: 'Syne', sans-serif;
           font-weight: 600;
-          letter-spacing: 0.05em;
-          text-transform: uppercase;
-          font-size: 0.875rem;
+          letter-spacing: 0.02em;
+          font-size: 0.9375rem;
         }
         .sidebar-nav {
           flex: 1;
@@ -118,12 +127,17 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
         }
         .nav-item.active {
           background: var(--primary-bg);
-          color: var(--text-primary);
+          color: var(--primary);
           font-weight: 500;
+          border-left: 2px solid var(--primary);
+          padding-left: calc(0.75rem - 2px);
         }
         .nav-icon {
-          font-size: 1rem;
-          opacity: 0.7;
+          flex-shrink: 0;
+          opacity: 0.8;
+        }
+        .nav-item.active .nav-icon {
+          opacity: 1;
         }
         .sidebar-footer {
           padding: 1rem 0.75rem;

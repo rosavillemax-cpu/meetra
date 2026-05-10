@@ -38,17 +38,18 @@ export function StatCard({ label, value, trend, icon }: StatCardProps) {
         }
         .stat-icon {
           font-size: 1rem;
-          opacity: 0.6;
+          color: var(--primary);
         }
         .stat-label {
           font-size: 0.875rem;
           color: var(--text-secondary);
         }
         .stat-value {
-          font-size: 2rem;
-          font-weight: 600;
+          font-size: 2.25rem;
+          font-weight: 700;
           color: var(--text-primary);
           line-height: 1.2;
+          font-variant-numeric: tabular-nums;
         }
         .stat-trend {
           display: flex;

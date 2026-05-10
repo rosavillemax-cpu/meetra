@@ -155,7 +155,7 @@ export function CreateEventTypeModal({ isOpen, onClose, onSubmit }: CreateEventT
         .modal-overlay {
           position: fixed;
           inset: 0;
-          background: rgba(0, 0, 0, 0.5);
+          background: rgba(0, 0, 0, 0.75);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -164,6 +164,7 @@ export function CreateEventTypeModal({ isOpen, onClose, onSubmit }: CreateEventT
         }
         .modal-content {
           background: var(--surface);
+          border: 1px solid var(--border);
           border-radius: var(--radius-lg);
           width: 100%;
           max-width: 480px;
@@ -213,6 +214,14 @@ export function CreateEventTypeModal({ isOpen, onClose, onSubmit }: CreateEventT
           background: var(--background);
           color: var(--text-primary);
           font-size: 0.9375rem;
+          transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+          outline: none;
+          border-color: var(--primary);
+          box-shadow: 0 0 0 2px var(--accent-dim);
         }
         .form-group textarea {
           resize: vertical;
