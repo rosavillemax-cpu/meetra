@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { auth, signOut } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 export async function GET() {
@@ -22,7 +22,10 @@ export async function GET() {
   })
 
   if (!user) {
-    return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    // User exists in session but not in DB - stale session
+    // Force signout to clear the invalid session
+    await signOut({ redirect: false })
+    return NextResponse.json({ error: 'User not found - session cleared' }, { status: 404 })
   }
 
   return NextResponse.json(user)
