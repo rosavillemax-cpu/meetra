@@ -1,7 +1,6 @@
 import NextAuth from 'next-auth'
 import Google from 'next-auth/providers/google'
 
-// Trim newlines that Vercel sometimes appends to env values
 const trimEnv = (key: string) => process.env[key]?.trim() ?? undefined
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -24,6 +23,28 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.id = token.sub
       }
       return session
+    },
+    async jwt({ token, user, account }) {
+      if (account?.provider === 'google' && user?.email) {
+        const { prisma } = await import('@/lib/prisma')
+        let dbUser = await prisma.user.findUnique({ where: { email: user.email } })
+        if (!dbUser) {
+          const handle = user.email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '') || 'user'
+          const existing = await prisma.user.findUnique({ where: { handle } })
+          dbUser = await prisma.user.create({
+            data: {
+              email: user.email,
+              name: user.name || user.email.split('@')[0],
+              image: user.image,
+              handle: existing ? `${handle}-${Date.now()}` : handle,
+            },
+          })
+        }
+        if (dbUser && token.sub !== dbUser.id) {
+          token.sub = dbUser.id
+        }
+      }
+      return token
     },
     async redirect({ url, baseUrl }) {
       const cleanBase = baseUrl.trim()

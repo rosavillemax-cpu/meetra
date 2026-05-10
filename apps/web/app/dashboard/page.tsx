@@ -252,7 +252,7 @@ export default async function DashboardPage() {
       <style>{`
         .page {
           padding: 2rem;
-          max-width: 1100px;
+          max-width: 1200px;
         }
 
         /* Welcome */

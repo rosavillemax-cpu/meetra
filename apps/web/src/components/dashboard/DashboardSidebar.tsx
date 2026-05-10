@@ -91,7 +91,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
       <style jsx>{`
         /* ── Desktop sidebar ── */
         .sidebar {
-          width: 260px;
+          width: 280px;
           min-height: 100vh;
           background: var(--surface);
           border-right: 1px solid var(--border);
