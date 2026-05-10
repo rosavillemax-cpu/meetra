@@ -1,32 +1,52 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&display=swap');
 
 :root {
-  --bg: #080808;
-  --surface: #111111;
-  --surface2: #181818;
-  --border: rgba(255,255,255,0.07);
-  --border-hover: rgba(255,255,255,0.14);
-  --text-primary: #f0ede8;
-  --text-secondary: #7a7873;
-  --text-tertiary: #3d3d3a;
-  --accent: #e8e3dc;
-  --accent-dim: rgba(232,227,220,0.08);
-  --blue: #3a7bd5;
-  --blue-dim: rgba(58,123,213,0.12);
-  --blue-text: #7ab4f5;
-  --green: #2d6a4f;
-  --green-dim: rgba(45,106,79,0.15);
-  --green-text: #74c69d;
-  --amber: #b45309;
-  --amber-dim: rgba(180,83,9,0.12);
-  --amber-text: #f4a553;
-  --red: #991b1b;
-  --red-dim: rgba(153,27,27,0.12);
-  --red-text: #f87171;
-  --radius: 10px;
-  --radius-lg: 16px;
+  /* Obsidian Dark — all dashboard components use these */
+  --bg:           #09090b;
+  --surface:      #18181b;
+  --surface2:     #27272a;
+  --border:       #27272a;
+  --border-hover: rgba(255,255,255,0.15);
+  --text-primary:   #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-tertiary:  #52525b;
 
-  /* Obsidian Design System */
+  /* Accent / Primary */
+  --accent:      #a78bfa;
+  --accent-dim:  rgba(167,139,250,0.12);
+  --primary:     #a78bfa;
+  --primary-bg:  rgba(167,139,250,0.12);
+
+  /* Status */
+  --success:     #34d399;
+  --success-bg:  rgba(52,211,153,0.12);
+  --warning:     #fbbf24;
+  --warning-bg:  rgba(251,191,36,0.12);
+  --error:       #ef4444;
+  --error-bg:    rgba(239,68,68,0.12);
+
+  /* Legacy color aliases */
+  --blue:        #3a7bd5;
+  --blue-dim:    rgba(58,123,213,0.12);
+  --blue-text:   #7ab4f5;
+  --green-text:  #34d399;
+  --amber-text:  #fbbf24;
+  --red-text:    #f87171;
+
+  /* Interactions */
+  --surface-hover: #27272a;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 8px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 24px rgba(0,0,0,0.5);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.6);
+
+  /* Radius */
+  --radius:    10px;
+  --radius-lg: 16px;
+  --radius-sm: 6px;
+
+  /* Obsidian Design System tokens (for landing page) */
   --obs-bg:          #09090b;
   --obs-surface-1:   #0c0c0f;
   --obs-surface-2:   #18181b;
@@ -88,7 +108,7 @@ code, pre {
 }
 
 .container {
-  max-width: 1100px;
+  max-width: 1140px;
   margin: 0 auto;
   padding: 0 2rem;
 }
