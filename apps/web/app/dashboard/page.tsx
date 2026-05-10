@@ -1,59 +1,250 @@
 import Link from 'next/link'
-import { LoginButton } from '@/components/LoginButton'
+import { auth } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
+import { StatCard } from '@/components/dashboard/StatCard'
+import { BookingCard } from '@/components/bookings/BookingCard'
 
-export default function Dashboard() {
+export default async function DashboardPage() {
+  const session = await auth()
+
+  if (!session?.user?.id) {
+    return null
+  }
+
+  const userId = session.user.id
+
+  const [upcomingBookings, eventTypes, totalBookings] = await Promise.all([
+    prisma.booking.findMany({
+      where: {
+        hostId: userId,
+        status: 'confirmed',
+        startAt: { gte: new Date() }
+      },
+      include: {
+        eventType: { select: { id: true, slug: true, title: true, color: true, durationMin: true } },
+        host: { select: { id: true, handle: true, name: true, image: true } }
+      },
+      orderBy: { startAt: 'asc' },
+      take: 5
+    }),
+    prisma.eventType.findMany({
+      where: { userId, active: true },
+      orderBy: { createdAt: 'desc' },
+      take: 4
+    }),
+    prisma.booking.count({
+      where: { hostId: userId, status: 'confirmed' }
+    })
+  ])
+
+  const pastBookingsCount = await prisma.booking.count({
+    where: { hostId: userId, startAt: { lt: new Date() }, status: 'confirmed' }
+  })
+
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <header style={{
-        borderBottom: '1px solid var(--border)',
-        padding: '1.5rem 0'
-      }}>
-        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}>
-            <div style={{
-              width: 8,
-              height: 8,
-              borderRadius: '50%',
-              background: 'var(--text-primary)'
-            }} />
-            <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '0.875rem' }}>
-              CallRoom
-            </span>
-          </Link>
-          <LoginButton />
+    <div className="dashboard-overview">
+      <header className="page-header">
+        <div>
+          <h1>Hoş geldin{session.user.name ? `, ${session.user.name.split(' ')[0]}` : ''}!</h1>
+          <p className="page-subtitle">Randevularınızı yönetin</p>
         </div>
+        <Link href="/dashboard/event-types" className="create-btn">
+          + Yeni randevu tipi
+        </Link>
       </header>
 
-      <main style={{ flex: 1, padding: '3rem 0' }}>
-        <div className="container">
-          <h1 style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>Dashboard</h1>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
-            Hoş geldiniz! Yakında burada randevularınızı yönetebileceksiniz.
-          </p>
+      <section className="stats-grid">
+        <StatCard
+          label="Yaklaşan randevular"
+          value={upcomingBookings.length}
+          icon="◷"
+        />
+        <StatCard
+          label="Toplam randevu"
+          value={totalBookings}
+          icon="◬"
+        />
+        <StatCard
+          label="Randevu tipleri"
+          value={eventTypes.length}
+          icon="◎"
+        />
+        <StatCard
+          label="Geçmiş randevular"
+          value={pastBookingsCount}
+          icon="◭"
+        />
+      </section>
 
-          <div style={{
-            background: 'var(--surface)',
-            border: '1px solid var(--border)',
-            borderRadius: 'var(--radius-lg)',
-            padding: '2rem',
-            textAlign: 'center'
-          }}>
-            <p style={{ color: 'var(--text-secondary)' }}>
-              Dashboard yakında eklenecek. Şimdilik landing sayfasına dönün.
-            </p>
+      {upcomingBookings.length > 0 && (
+        <section className="upcoming-section">
+          <div className="section-header">
+            <h2>Yaklaşan randevular</h2>
+            <Link href="/dashboard/bookings" className="view-all">
+              Tümünü gör →
+            </Link>
           </div>
-        </div>
-      </main>
+          <div className="bookings-grid">
+            {upcomingBookings.map(booking => (
+              <BookingCard key={booking.id} booking={booking} />
+            ))}
+          </div>
+        </section>
+      )}
 
-      <footer style={{
-        borderTop: '1px solid var(--border)',
-        padding: '2rem 0',
-        textAlign: 'center'
-      }}>
-        <p style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>
-          CallRoom — Kolay randevu planlama
-        </p>
-      </footer>
+      {eventTypes.length > 0 && (
+        <section className="event-types-section">
+          <div className="section-header">
+            <h2>Randevu tiplerin</h2>
+            <Link href="/dashboard/event-types" className="view-all">
+              Yönet →
+            </Link>
+          </div>
+          <div className="event-types-grid">
+            {eventTypes.map(et => (
+              <Link key={et.id} href={`/dashboard/event-types/${et.id}`} className="event-type-mini">
+                <div className="et-color" style={{ background: et.color }} />
+                <span className="et-title">{et.title}</span>
+                <span className="et-duration">{et.durationMin} dk</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {upcomingBookings.length === 0 && eventTypes.length === 0 && (
+        <section className="empty-state">
+          <div className="empty-icon">◈</div>
+          <h2>Henüz randevu tipin yok</h2>
+          <p>Randevu tiplerinizi oluşturarak başlayın</p>
+          <Link href="/dashboard/event-types" className="create-btn">
+            İlk randevu tipini oluştur
+          </Link>
+        </section>
+      )}
+
+      <style jsx>{`
+        .dashboard-overview {
+          padding: 2rem;
+          max-width: 1200px;
+        }
+        .page-header {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          margin-bottom: 2rem;
+        }
+        .page-header h1 {
+          font-size: 1.75rem;
+          font-weight: 600;
+          margin: 0 0 0.25rem;
+        }
+        .page-subtitle {
+          color: var(--text-secondary);
+          margin: 0;
+        }
+        .create-btn {
+          padding: 0.625rem 1rem;
+          background: var(--primary);
+          color: white;
+          border-radius: var(--radius);
+          text-decoration: none;
+          font-size: 0.875rem;
+          font-weight: 500;
+          transition: opacity 0.15s;
+        }
+        .create-btn:hover {
+          opacity: 0.9;
+        }
+        .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 1rem;
+          margin-bottom: 2.5rem;
+        }
+        .section-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 1rem;
+        }
+        .section-header h2 {
+          font-size: 1.125rem;
+          font-weight: 600;
+          margin: 0;
+        }
+        .view-all {
+          font-size: 0.875rem;
+          color: var(--text-secondary);
+          text-decoration: none;
+        }
+        .view-all:hover {
+          color: var(--text-primary);
+        }
+        .upcoming-section,
+        .event-types-section {
+          margin-bottom: 2.5rem;
+        }
+        .bookings-grid {
+          display: grid;
+          gap: 1rem;
+        }
+        .event-types-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          gap: 0.75rem;
+        }
+        .event-type-mini {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding: 0.875rem 1rem;
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-lg);
+          text-decoration: none;
+          transition: all 0.15s;
+        }
+        .event-type-mini:hover {
+          border-color: var(--text-tertiary);
+        }
+        .et-color {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          flex-shrink: 0;
+        }
+        .et-title {
+          flex: 1;
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: var(--text-primary);
+        }
+        .et-duration {
+          font-size: 0.75rem;
+          color: var(--text-tertiary);
+        }
+        .empty-state {
+          text-align: center;
+          padding: 4rem 2rem;
+          background: var(--surface);
+          border: 1px dashed var(--border);
+          border-radius: var(--radius-lg);
+        }
+        .empty-icon {
+          font-size: 3rem;
+          opacity: 0.3;
+          margin-bottom: 1rem;
+        }
+        .empty-state h2 {
+          font-size: 1.25rem;
+          margin: 0 0 0.5rem;
+        }
+        .empty-state p {
+          color: var(--text-secondary);
+          margin: 0 0 1.5rem;
+        }
+      `}</style>
     </div>
   )
 }
