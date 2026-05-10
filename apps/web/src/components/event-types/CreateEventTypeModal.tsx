@@ -214,7 +214,7 @@ export function CreateEventTypeModal({ isOpen, onClose, onSubmit }: CreateEventT
           background: var(--background);
           color: var(--text-primary);
           font-size: 0.9375rem;
-          transition: border-color 0.15s, box-shadow 0.15s;
+          transition: border-color 0.15s;
         }
         .form-group input:focus,
         .form-group select:focus,

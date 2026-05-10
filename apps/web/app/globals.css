@@ -45,9 +45,9 @@
   --shadow-lg: 0 8px 40px rgba(0,0,0,0.6);
 
   /* Radius */
-  --radius:    10px;
-  --radius-lg: 16px;
-  --radius-sm: 6px;
+  --radius:    8px;
+  --radius-lg: 8px;
+  --radius-sm: 4px;
 
   /* Obsidian Design System tokens (for landing page) */
   --obs-bg:          #09090b;

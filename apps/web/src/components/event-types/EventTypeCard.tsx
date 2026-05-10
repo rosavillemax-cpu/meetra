@@ -128,7 +128,6 @@ export function EventTypeCard({ eventType, onEdit, onDelete }: EventTypeCardProp
           padding: 0.25rem;
           min-width: 120px;
           z-index: 10;
-          box-shadow: var(--shadow-md);
         }
         .menu-dropdown button {
           display: flex;
