@@ -17,7 +17,7 @@ interface WeekScheduleProps {
 export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: WeekScheduleProps) {
   const [selectedDay, setSelectedDay] = useState<number | null>(null)
   const [startTime, setStartTime] = useState('09:00')
-  const [endTime, setEndTime] = useState('17:00')
+  const [endTime, setEndTime] = useState('18:00')
   const [closedDays, setClosedDays] = useState<Set<number>>(new Set())
 
   const getRulesForDay = (weekday: number) => {
@@ -37,7 +37,7 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
     if (selectedDay === null) return
     onAddRule?.(selectedDay, startTime, endTime)
     setStartTime('09:00')
-    setEndTime('17:00')
+    setEndTime('18:00')
     setSelectedDay(null)
   }
 
