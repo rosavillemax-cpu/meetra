@@ -22,45 +22,74 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
   const pathname = usePathname()
 
   return (
-    <aside className="sidebar">
-      <div className="sidebar-header">
+    <>
+      {/* Desktop sidebar */}
+      <aside className="sidebar">
+        <div className="sidebar-header">
+          <Link href="/" className="brand">
+            <div className="brand-icon">C</div>
+            <span className="brand-name">Callroom</span>
+          </Link>
+        </div>
+
+        <nav className="sidebar-nav">
+          {navItems.map(({ href, label, Icon }) => (
+            <Link
+              key={href}
+              href={href}
+              className={`nav-item ${pathname === href ? 'active' : ''}`}
+            >
+              <Icon size={16} className="nav-icon" />
+              <span className="nav-label">{label}</span>
+            </Link>
+          ))}
+        </nav>
+
+        <div className="sidebar-footer">
+          {user && (
+            <div className="user-info">
+              {user.image && (
+                <img src={user.image} alt={user.name || ''} className="user-avatar" />
+              )}
+              <div className="user-details">
+                <span className="user-name">{user.name}</span>
+                <span className="user-email">{user.email}</span>
+              </div>
+            </div>
+          )}
+          <button onClick={() => signOut()} className="signout-btn">
+            Çıkış yap
+          </button>
+        </div>
+      </aside>
+
+      {/* Mobile top bar */}
+      <header className="mobile-topbar">
         <Link href="/" className="brand">
           <div className="brand-icon">C</div>
           <span className="brand-name">Callroom</span>
         </Link>
-      </div>
+        {user?.image && (
+          <img src={user.image} alt={user.name || ''} className="mobile-avatar" />
+        )}
+      </header>
 
-      <nav className="sidebar-nav">
+      {/* Mobile bottom nav */}
+      <nav className="mobile-nav">
         {navItems.map(({ href, label, Icon }) => (
           <Link
             key={href}
             href={href}
-            className={`nav-item ${pathname === href ? 'active' : ''}`}
+            className={`mobile-nav-item ${pathname === href ? 'active' : ''}`}
           >
-            <Icon size={16} className="nav-icon" />
-            <span className="nav-label">{label}</span>
+            <Icon size={20} />
+            <span>{label}</span>
           </Link>
         ))}
       </nav>
 
-      <div className="sidebar-footer">
-        {user && (
-          <div className="user-info">
-            {user.image && (
-              <img src={user.image} alt={user.name || ''} className="user-avatar" />
-            )}
-            <div className="user-details">
-              <span className="user-name">{user.name}</span>
-              <span className="user-email">{user.email}</span>
-            </div>
-          </div>
-        )}
-        <button onClick={() => signOut()} className="signout-btn">
-          Çıkış yap
-        </button>
-      </div>
-
       <style jsx>{`
+        /* ── Desktop sidebar ── */
         .sidebar {
           width: 260px;
           min-height: 100vh;
@@ -69,6 +98,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
           display: flex;
           flex-direction: column;
           padding: 1.5rem 0;
+          flex-shrink: 0;
         }
         .sidebar-header {
           padding: 0 1.5rem 1.5rem;
@@ -91,14 +121,12 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
           display: flex;
           align-items: center;
           justify-content: center;
-          font-family: 'Syne', sans-serif;
           font-weight: 700;
           font-size: 0.875rem;
           color: var(--primary);
           flex-shrink: 0;
         }
         .brand-name {
-          font-family: 'Syne', sans-serif;
           font-weight: 600;
           letter-spacing: 0.02em;
           font-size: 0.9375rem;
@@ -191,7 +219,68 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
           background: var(--surface-hover);
           color: var(--text-primary);
         }
+
+        /* ── Mobile ── */
+        .mobile-topbar {
+          display: none;
+        }
+        .mobile-nav {
+          display: none;
+        }
+
+        @media (max-width: 768px) {
+          .sidebar {
+            display: none;
+          }
+          .mobile-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.875rem 1.25rem;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 40;
+          }
+          .mobile-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border);
+          }
+          .mobile-nav {
+            display: flex;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            z-index: 40;
+          }
+          .mobile-nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+            padding: 0.625rem 0.25rem;
+            color: var(--text-tertiary);
+            text-decoration: none;
+            font-size: 0.625rem;
+            transition: color 0.15s;
+          }
+          .mobile-nav-item.active {
+            color: var(--primary);
+          }
+          .mobile-nav-item:hover {
+            color: var(--text-primary);
+          }
+        }
       `}</style>
-    </aside>
+    </>
   )
 }

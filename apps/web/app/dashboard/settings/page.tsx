@@ -215,9 +215,9 @@ export default function SettingsPage() {
         }
         .form-group input:focus,
         .form-group select:focus {
-          outline: none;
+          outline: 2px solid var(--primary);
+          outline-offset: 2px;
           border-color: var(--primary);
-          box-shadow: 0 0 0 2px var(--accent-dim);
         }
         .handle-input {
           display: flex;

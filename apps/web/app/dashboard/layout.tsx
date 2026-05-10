@@ -44,6 +44,14 @@ export default async function DashboardLayout({
           flex: 1;
           overflow-x: hidden;
         }
+        @media (max-width: 768px) {
+          .dashboard-layout {
+            flex-direction: column;
+          }
+          .dashboard-main {
+            padding-bottom: 4rem;
+          }
+        }
       `}</style>
     </div>
   )
