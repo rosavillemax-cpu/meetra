@@ -4,20 +4,14 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { StatCard } from '@/components/dashboard/StatCard'
 import { BookingCard } from '@/components/bookings/BookingCard'
-
-const DAYS_TR = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt']
+import { WeekStrip } from '@/components/dashboard/WeekStrip'
+import type { BookingWithRelations } from '@/components/dashboard/WeekStrip'
 
 function getGreeting() {
   const h = new Date().getHours()
   if (h < 12) return 'Günaydın'
   if (h < 18) return 'İyi öğlenler'
   return 'İyi akşamlar'
-}
-
-function isSameDay(a: Date, b: Date) {
-  return a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
 }
 
 export default async function DashboardPage() {
@@ -44,12 +38,6 @@ export default async function DashboardPage() {
     prisma.booking.count({ where: { hostId: userId, status: 'confirmed' } }),
     prisma.booking.count({ where: { hostId: userId, startAt: { lt: new Date() }, status: 'confirmed' } })
   ])
-
-  const next7 = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date()
-    d.setDate(d.getDate() + i)
-    return d
-  })
 
   const firstName = session.user.name?.split(' ')[0] ?? ''
   const todayStr = new Date().toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long' })
@@ -105,33 +93,8 @@ export default async function DashboardPage() {
         />
       </div>
 
-      {/* ─── 7-day strip ─── */}
-      <div className="week-card">
-        <div className="week-head">
-          <span className="week-label">Bu hafta</span>
-          <Link href="/dashboard/bookings" className="see-all">
-            Tümünü gör <ArrowRight size={11} />
-          </Link>
-        </div>
-        <div className="week-row">
-          {next7.map((day, i) => {
-            const count = upcomingBookings.filter(b => isSameDay(new Date(b.startAt), day)).length
-            const isToday = i === 0
-            return (
-              <div key={i} className={`day ${isToday ? 'today' : ''} ${count > 0 ? 'busy' : ''}`}>
-                <span className="d-name">{DAYS_TR[day.getDay()]}</span>
-                <span className="d-num">{day.getDate()}</span>
-                <div className="d-dots">
-                  {Array.from({ length: Math.min(count, 3) }, (_, j) => (
-                    <span key={j} className="dot" />
-                  ))}
-                  {count === 0 && <span className="dot-empty" />}
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
+      {/* ─── Week strip (interactive, clickable) ─── */}
+      <WeekStrip bookings={upcomingBookings as BookingWithRelations[]} />
 
       {/* ─── Body ─── */}
       <div className="body">
@@ -151,19 +114,16 @@ export default async function DashboardPage() {
           {upcomingBookings.length > 0 ? (
             <div className="booking-rows">
               {upcomingBookings.map(b => (
-                <BookingCard key={b.id} booking={b} />
+                <BookingCard key={b.id} booking={b as Parameters<typeof BookingCard>[0]['booking']} />
               ))}
             </div>
           ) : (
             <div className="empty">
               <svg viewBox="0 0 96 96" fill="none" className="empty-art">
-                {/* Calendar body */}
                 <rect x="12" y="22" width="72" height="62" rx="6" stroke="currentColor" strokeWidth="1.5" />
                 <line x1="12" y1="38" x2="84" y2="38" stroke="currentColor" strokeWidth="1.5" />
-                {/* Calendar rings */}
                 <line x1="30" y1="12" x2="30" y2="30" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 <line x1="66" y1="12" x2="66" y2="30" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                {/* Grid cells */}
                 <rect x="22" y="46" width="13" height="10" rx="2" fill="currentColor" opacity="0.25" />
                 <rect x="41" y="46" width="13" height="10" rx="2" fill="currentColor" opacity="0.12" />
                 <rect x="60" y="46" width="13" height="10" rx="2" fill="currentColor" opacity="0.12" />
@@ -172,7 +132,6 @@ export default async function DashboardPage() {
                 <rect x="60" y="62" width="13" height="10" rx="2" fill="currentColor" opacity="0.12" />
                 <rect x="22" y="78" width="13" height="10" rx="2" fill="currentColor" opacity="0.12" />
                 <rect x="41" y="78" width="13" height="10" rx="2" fill="currentColor" opacity="0.12" />
-                {/* Highlight cell */}
                 <rect x="22" y="46" width="13" height="10" rx="2" stroke="currentColor" strokeOpacity="0.4" />
               </svg>
               <p className="empty-title">Randevu yok</p>
@@ -326,100 +285,6 @@ export default async function DashboardPage() {
           margin-bottom: 1.25rem;
         }
 
-        /* Week strip */
-        .week-card {
-          background: var(--surface);
-          border: 1px solid var(--border);
-          border-radius: var(--radius);
-          padding: 1rem 1.25rem;
-          margin-bottom: 1.5rem;
-        }
-        .week-head {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 0.875rem;
-        }
-        .week-label {
-          font-size: 0.6875rem;
-          font-weight: 600;
-          color: var(--text-tertiary);
-          text-transform: uppercase;
-          letter-spacing: 0.07em;
-        }
-        .see-all {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.2rem;
-          font-size: 0.75rem;
-          color: var(--text-tertiary);
-          text-decoration: none;
-          transition: color 0.15s;
-        }
-        .see-all:hover { color: var(--primary); }
-        .week-row {
-          display: grid;
-          grid-template-columns: repeat(7, 1fr);
-          gap: 0.375rem;
-        }
-        .day {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.2rem;
-          padding: 0.5rem 0.25rem;
-          border-radius: var(--radius-sm);
-          border: 1px solid transparent;
-          transition: all 0.15s;
-        }
-        .day.today {
-          background: var(--primary-bg);
-          border-color: rgba(167,139,250,0.3);
-          animation: today-glow 3s ease-in-out infinite;
-        }
-        @keyframes today-glow {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(99,50,229,0.0); }
-          50% { box-shadow: 0 0 0 4px rgba(99,50,229,0.08); }
-        }
-        .day.busy:not(.today) {
-          background: rgba(255,255,255,0.03);
-        }
-        .d-name {
-          font-size: 0.6rem;
-          font-weight: 600;
-          color: var(--text-tertiary);
-          text-transform: uppercase;
-          letter-spacing: 0.04em;
-        }
-        .day.today .d-name { color: var(--primary); }
-        .d-num {
-          font-size: 0.9375rem;
-          font-weight: 600;
-          color: var(--text-secondary);
-          font-variant-numeric: tabular-nums;
-          line-height: 1;
-        }
-        .day.today .d-num { color: var(--primary); }
-        .d-dots {
-          display: flex;
-          gap: 2px;
-          height: 7px;
-          align-items: center;
-          justify-content: center;
-        }
-        .dot {
-          width: 4px;
-          height: 4px;
-          border-radius: 50%;
-          background: var(--primary);
-          flex-shrink: 0;
-        }
-        .dot-empty {
-          width: 4px;
-          height: 4px;
-          display: block;
-        }
-
         /* Body */
         .body {
           display: grid;
@@ -453,6 +318,16 @@ export default async function DashboardPage() {
           color: var(--text-primary);
         }
         .ph-icon { color: var(--text-tertiary); }
+        .see-all {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.2rem;
+          font-size: 0.75rem;
+          color: var(--text-tertiary);
+          text-decoration: none;
+          transition: color 0.15s;
+        }
+        .see-all:hover { color: var(--primary); }
 
         /* Bookings */
         .booking-rows { display: flex; flex-direction: column; }
@@ -593,9 +468,6 @@ export default async function DashboardPage() {
           .page { padding: 1.25rem; }
           .welcome { flex-direction: column; align-items: flex-start; }
           .stats { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
-          .week-row { gap: 0.25rem; }
-          .d-name { font-size: 0.55rem; }
-          .d-num { font-size: 0.8125rem; }
           .sidebar-col { grid-template-columns: 1fr; }
         }
       `}</style>
