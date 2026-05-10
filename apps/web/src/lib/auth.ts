@@ -34,6 +34,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             session.user.image = dbUser.image ?? null
           }
         }
+        const isReturning = await prisma.booking.count({ where: { hostId: session.user.id } }) > 0
+        if (session.user) {
+          ;(session.user as any).isReturning = isReturning
+        }
       }
       return session
     },
@@ -55,10 +59,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           }
           if (dbUser) {
             if (token.sub !== dbUser.id) token.sub = dbUser.id
-            if (token.name !== dbUser.name) token.name = dbUser.name
           }
         } catch (error) {
           console.error('Auth JWT callback error:', error)
+        }
+      }
+      if (token.sub) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.sub },
+          select: { name: true },
+        })
+        if (dbUser?.name) {
+          token.name = dbUser.name
         }
       }
       return token

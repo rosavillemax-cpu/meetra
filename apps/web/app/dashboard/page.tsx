@@ -7,11 +7,12 @@ import { BookingCard } from '@/components/bookings/BookingCard'
 import { WeekStrip } from '@/components/dashboard/WeekStrip'
 import type { BookingWithRelations } from '@/components/dashboard/WeekStrip'
 
-function getGreeting() {
+function getGreeting(name: string | null | undefined, isReturning?: boolean) {
   const h = new Date().getHours()
-  if (h < 12) return 'Günaydın'
-  if (h < 18) return 'İyi öğlenler'
-  return 'İyi akşamlar'
+  const timeGreeting = h < 12 ? 'Günaydın' : h < 18 ? 'İyi öğlenler' : 'İyi akşamlar'
+  const namePart = name ? `, ${name.split(' ')[0]}!` : '!'
+  const fullGreeting = isReturning ? `${timeGreeting}${namePart}` : `Hoş geldin${namePart}`
+  return fullGreeting
 }
 
 export default async function DashboardPage() {
@@ -41,6 +42,8 @@ export default async function DashboardPage() {
 
   const firstName = session.user.name?.split(' ')[0] ?? ''
   const todayStr = new Date().toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long' })
+  const isReturning = (session.user as any)?.isReturning
+  const greeting = getGreeting(firstName, isReturning)
 
   return (
     <div className="page">
@@ -50,7 +53,7 @@ export default async function DashboardPage() {
         <div>
           <div className="greeting-pill">
             <span className="pulse-dot" />
-            {getGreeting()}
+            {greeting}
           </div>
           <h1>{firstName || 'Hoş geldin'}!</h1>
           <p className="date-str">{todayStr}</p>
