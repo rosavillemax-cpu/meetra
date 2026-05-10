@@ -29,7 +29,7 @@ export default async function DashboardPage() {
     }),
     prisma.eventType.findMany({
       where: { userId, active: true },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { id: 'desc' },
       take: 4
     }),
     prisma.booking.count({
@@ -123,7 +123,7 @@ export default async function DashboardPage() {
         </section>
       )}
 
-      <style jsx>{`
+      <style>{`
         .dashboard-overview {
           padding: 2rem;
           max-width: 1200px;

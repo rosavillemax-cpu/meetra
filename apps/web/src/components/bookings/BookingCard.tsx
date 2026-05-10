@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Calendar, Clock, User, MoreVertical, X, Check } from 'lucide-react'
 import type { Booking, EventType, User as PrismaUser } from '@prisma/client'
 
-type BookingWithRelations = Booking & {
+export type BookingWithRelations = Booking & {
   eventType: Pick<EventType, 'id' | 'slug' | 'title' | 'color' | 'durationMin'>
   host: Pick<PrismaUser, 'id' | 'handle' | 'name' | 'image'>
 }

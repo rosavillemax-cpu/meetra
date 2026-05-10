@@ -3,17 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Calendar, Filter } from 'lucide-react'
 import { BookingCard } from '@/components/bookings/BookingCard'
-
-type BookingWithRelations = {
-  id: string
-  startAt: Date
-  endAt: Date
-  status: string
-  guestName: string
-  guestEmail: string
-  eventType: { id: string; slug: string; title: string; color: string; durationMin: number }
-  host: { id: string; handle: string; name: string; image: string }
-}
+import type { BookingWithRelations } from '@/components/bookings/BookingCard'
 
 type FilterType = 'upcoming' | 'past' | 'cancelled' | 'all'
 

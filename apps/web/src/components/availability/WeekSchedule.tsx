@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react'
 import type { AvailabilityRule } from '@prisma/client'
 
-const WEEKDAYS = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', Perşembe', 'Cuma', 'Cumartesi']
+const WEEKDAYS = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi']
 const WEEKDAYS_SHORT = ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct']
 
 interface WeekScheduleProps {

@@ -35,7 +35,7 @@ export default async function DashboardLayout({
         {children}
       </main>
 
-      <style jsx>{`
+      <style>{`
         .dashboard-layout {
           display: flex;
           min-height: 100vh;
