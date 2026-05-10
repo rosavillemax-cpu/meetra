@@ -1,11 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronLeft, ChevronRight, Plus, EyeOff, Eye } from 'lucide-react'
+import { Plus, EyeOff, Eye } from 'lucide-react'
 import type { AvailabilityRule } from '@prisma/client'
 
 const WEEKDAYS = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi']
-const WEEKDAYS_SHORT = ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct']
 
 interface WeekScheduleProps {
   rules: AvailabilityRule[]
@@ -46,27 +45,36 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
           const dayRules = getRulesForDay(index)
           const isSelected = selectedDay === index
           const isClosed = closedDays.has(index)
+          const hasSlots = dayRules.length > 0
 
           return (
             <div
               key={day}
-              className={`day-column ${isSelected ? 'selected' : ''} ${isClosed ? 'closed' : ''}`}
-              onClick={() => !isClosed && setSelectedDay(isSelected ? null : index)}
+              className={`day-column ${isSelected ? 'selected' : ''} ${isClosed ? 'closed' : ''} ${hasSlots && !isClosed ? 'has-slots' : ''}`}
             >
+              {/* Header */}
               <div className="day-header">
                 <span className="day-name">{day}</span>
                 <div className="day-header-right">
-                  <button
-                    className={`day-toggle ${isClosed ? 'is-closed' : ''}`}
-                    onClick={(e) => { e.stopPropagation(); toggleClosed(index); }}
-                    title={isClosed ? 'Günü aç' : 'Günü kapat'}
+                  <div className={`toggle-wrap ${isClosed ? 'toggle-closed' : ''}`} title={isClosed ? 'Günü aç' : 'Günü kapat'}>
+                    <button
+                      className={`toggle ${isClosed ? 'is-closed' : ''}`}
+                      onClick={(e) => { e.stopPropagation(); toggleClosed(index); }}
+                      aria-label={isClosed ? 'Günü aç' : 'Günü kapat'}
+                    >
+                      <span className="toggle-thumb" />
+                    </button>
+                  </div>
+                  <span
+                    className="day-count"
+                    title={hasSlots ? `${dayRules.length} saat aralığı tanımlı` : 'Henüz saat aralığı yok'}
                   >
-                    {isClosed ? <EyeOff size={12} /> : <Eye size={12} />}
-                  </button>
-                  <span className="day-count">{dayRules.length}</span>
+                    {dayRules.length}
+                  </span>
                 </div>
               </div>
 
+              {/* Slots */}
               <div className="day-slots">
                 {dayRules.map(rule => (
                   <div key={rule.id} className="time-slot">
@@ -77,6 +85,7 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
                       <button
                         onClick={(e) => { e.stopPropagation(); onDeleteRule(rule); }}
                         className="slot-delete"
+                        aria-label="Sil"
                       >
                         ×
                       </button>
@@ -85,6 +94,16 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
                 ))}
               </div>
 
+              {/* Empty state — dashed line when no slots and not closed */}
+              {!hasSlots && !isClosed && !isSelected && (
+                <div className="day-empty-hint">
+                  <span className="empty-dash" />
+                  <span className="empty-text">Kapalı</span>
+                  <span className="empty-dash" />
+                </div>
+              )}
+
+              {/* Add form when selected */}
               {isSelected && !isClosed && (
                 <div className="day-add-form" onClick={e => e.stopPropagation()}>
                   <input
@@ -93,32 +112,44 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
                     onChange={e => setStartTime(e.target.value)}
                     className="time-input"
                   />
-                  <span className="time-separator">—</span>
+                  <span className="time-sep">—</span>
                   <input
                     type="time"
                     value={endTime}
                     onChange={e => setEndTime(e.target.value)}
                     className="time-input"
                   />
-                  <button onClick={handleAddSlot} className="add-slot-btn">
-                    <Plus size={14} />
+                  <button onClick={handleAddSlot} className="add-btn" aria-label="Ekle">
+                    <Plus size={12} />
                   </button>
                 </div>
               )}
 
-              {!isSelected && !isClosed && dayRules.length === 0 && (
+              {/* Add button when not selected, not closed, no slots yet */}
+              {!isSelected && !isClosed && !hasSlots && (
                 <button
-                  className="add-slot-empty"
+                  className="add-slot-btn"
                   onClick={(e) => { e.stopPropagation(); setSelectedDay(index); }}
                 >
                   <Plus size={12} />
-                  Saat ekle
+                  <span>Saat ekle</span>
                 </button>
               )}
 
+              {/* Add button when has slots but not selected */}
+              {!isSelected && !isClosed && hasSlots && (
+                <button
+                  className="add-slot-btn add-slot-btn--compact"
+                  onClick={(e) => { e.stopPropagation(); setSelectedDay(index); }}
+                >
+                  <Plus size={11} />
+                  <span>Ekle</span>
+                </button>
+              )}
+
+              {/* Closed overlay */}
               {isClosed && (
                 <div className="closed-overlay">
-                  <EyeOff size={14} />
                   <span>Gün kapalı</span>
                 </div>
               )}
@@ -137,19 +168,19 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
           gap: 0.75rem;
           min-width: 700px;
         }
+
+        /* ── Card ── */
         .day-column {
           background: var(--surface);
           border: 1px solid var(--border);
           border-radius: var(--radius-lg);
           padding: 0.75rem;
-          cursor: pointer;
-          transition: all 0.15s;
-          min-height: 200px;
           display: flex;
           flex-direction: column;
           gap: 0.5rem;
+          transition: all 0.15s;
         }
-        .day-column:hover:not(.closed) {
+        .day-column:hover:not(.closed):not(.selected) {
           border-color: var(--text-tertiary);
         }
         .day-column.selected {
@@ -157,65 +188,92 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
           background: var(--primary-bg);
         }
         .day-column.closed {
-          opacity: 0.55;
-          cursor: default;
+          opacity: 0.5;
         }
+        .day-column.has-slots {
+          border-color: rgba(99,50,229,0.2);
+        }
+
+        /* ── Header ── */
         .day-header {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding-bottom: 0.5rem;
-          border-bottom: 1px solid var(--border);
         }
         .day-header-right {
           display: flex;
           align-items: center;
-          gap: 0.375rem;
+          gap: 0.5rem;
         }
         .day-name {
           font-size: 0.8125rem;
           font-weight: 500;
           color: var(--text-primary);
         }
-        .day-count {
-          font-size: 0.75rem;
-          color: var(--text-tertiary);
-          background: var(--surface-hover);
-          padding: 0.125rem 0.375rem;
-          border-radius: var(--radius-sm);
+
+        /* ── Toggle switch ── */
+        .toggle-wrap {
+          position: relative;
         }
-        .day-toggle {
-          display: flex;
+        .toggle {
+          width: 32px;
+          height: 18px;
+          border-radius: 999px;
+          border: none;
+          background: var(--surface-hover);
+          cursor: pointer;
+          position: relative;
+          transition: background 0.2s;
+          padding: 0;
+        }
+        .toggle.is-closed {
+          background: var(--error);
+        }
+        .toggle:not(.is-closed) {
+          background: var(--primary);
+        }
+        .toggle-thumb {
+          position: absolute;
+          top: 2px;
+          left: 2px;
+          width: 14px;
+          height: 14px;
+          border-radius: 50%;
+          background: #fff;
+          transition: transform 0.2s;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+        .toggle.is-closed .toggle-thumb {
+          transform: translateX(14px);
+        }
+
+        /* ── Counter badge ── */
+        .day-count {
+          display: inline-flex;
           align-items: center;
           justify-content: center;
-          width: 22px;
-          height: 22px;
-          border-radius: 5px;
-          border: none;
-          background: transparent;
+          min-width: 20px;
+          height: 20px;
+          padding: 0 0.3rem;
+          font-size: 0.7rem;
+          font-weight: 600;
           color: var(--text-tertiary);
-          cursor: pointer;
-          transition: all 0.15s;
-        }
-        .day-toggle:hover {
           background: var(--surface-hover);
-          color: var(--text-primary);
+          border-radius: var(--radius-sm);
+          cursor: default;
         }
-        .day-toggle.is-closed {
-          color: var(--error);
-          background: var(--error-bg);
-        }
+
+        /* ── Slots ── */
         .day-slots {
           display: flex;
           flex-direction: column;
           gap: 0.375rem;
-          flex: 1;
         }
         .time-slot {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 0.375rem 0.5rem;
+          padding: 0.3rem 0.5rem;
           background: var(--surface-hover);
           border-radius: var(--radius);
           font-size: 0.75rem;
@@ -223,6 +281,7 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
         .slot-time {
           color: var(--text-primary);
           font-family: 'DM Mono', monospace;
+          font-size: 0.7rem;
         }
         .slot-delete {
           width: 16px;
@@ -237,54 +296,39 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
           justify-content: center;
           font-size: 1rem;
           line-height: 1;
+          flex-shrink: 0;
         }
         .slot-delete:hover {
           background: var(--error-bg);
           color: var(--error);
         }
-        .day-add-form {
+
+        /* ── Empty hint ── */
+        .day-empty-hint {
           display: flex;
           align-items: center;
-          gap: 0.25rem;
-          padding-top: 0.75rem;
-          border-top: 1px solid var(--border);
+          gap: 0.375rem;
+          padding: 0.25rem 0;
         }
-        .time-input {
-          width: 70px;
-          padding: 0.25rem 0.375rem;
-          border: 1px solid var(--border);
-          border-radius: var(--radius);
-          background: var(--surface);
-          color: var(--text-primary);
-          font-size: 0.75rem;
-          font-family: 'DM Mono', monospace;
+        .empty-dash {
+          flex: 1;
+          height: 1px;
+          background: var(--border);
+          border-radius: 1px;
         }
-        .time-separator {
-          font-size: 0.75rem;
+        .empty-text {
+          font-size: 0.65rem;
           color: var(--text-tertiary);
+          white-space: nowrap;
         }
+
+        /* ── Add slot button ── */
         .add-slot-btn {
-          width: 24px;
-          height: 24px;
-          border-radius: 50%;
-          border: none;
-          background: var(--primary);
-          color: white;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .add-slot-btn:hover {
-          opacity: 0.9;
-        }
-        .add-slot-empty {
-          display: flex;
+          display: inline-flex;
           align-items: center;
           justify-content: center;
           gap: 0.3rem;
-          width: 100%;
-          padding: 0.5rem;
+          padding: 0.4rem 0.75rem;
           border-radius: var(--radius);
           border: 1.5px dashed var(--border);
           background: transparent;
@@ -292,23 +336,81 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
           font-size: 0.75rem;
           cursor: pointer;
           transition: all 0.15s;
+          white-space: nowrap;
           margin-top: auto;
         }
-        .add-slot-empty:hover {
+        .add-slot-btn span {
+          white-space: nowrap;
+        }
+        .add-slot-btn:hover {
           border-color: var(--primary);
           color: var(--primary);
           background: var(--primary-bg);
         }
-        .closed-overlay {
+        .add-slot-btn--compact {
+          padding: 0.3rem 0.6rem;
+          font-size: 0.7rem;
+          gap: 0.25rem;
+        }
+        .add-slot-btn--compact span {
+          white-space: nowrap;
+        }
+
+        /* ── Add form ── */
+        .day-add-form {
           display: flex;
-          flex-direction: column;
+          align-items: center;
+          gap: 0.2rem;
+          padding-top: 0.5rem;
+          border-top: 1px solid var(--border);
+          margin-top: auto;
+        }
+        .time-input {
+          width: 64px;
+          padding: 0.25rem 0.3rem;
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          background: var(--surface);
+          color: var(--text-primary);
+          font-size: 0.7rem;
+          font-family: 'DM Mono', monospace;
+        }
+        .time-input:focus {
+          outline: none;
+          border-color: var(--primary);
+        }
+        .time-sep {
+          font-size: 0.7rem;
+          color: var(--text-tertiary);
+          flex-shrink: 0;
+        }
+        .add-btn {
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          border: none;
+          background: var(--primary);
+          color: #fff;
+          cursor: pointer;
+          display: flex;
           align-items: center;
           justify-content: center;
-          gap: 0.375rem;
+          flex-shrink: 0;
+          transition: opacity 0.15s;
+        }
+        .add-btn:hover {
+          opacity: 0.88;
+        }
+
+        /* ── Closed overlay ── */
+        .closed-overlay {
+          display: flex;
+          align-items: center;
+          justify-content: center;
           flex: 1;
+          min-height: 60px;
           color: var(--text-tertiary);
           font-size: 0.75rem;
-          opacity: 0.7;
         }
       `}</style>
     </div>
