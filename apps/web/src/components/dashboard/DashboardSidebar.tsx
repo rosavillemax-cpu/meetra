@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import { LayoutDashboard, CalendarDays, Clock4, CalendarClock, Settings, X, Menu, type LucideIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import type { User } from 'next-auth'
 
 const navItems: { href: string; label: string; Icon: LucideIcon }[] = [
@@ -23,64 +23,50 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
 
+  const closeMobile = useCallback(() => setMobileOpen(false), [])
+
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [mobileOpen])
+
+  useEffect(() => {
+    closeMobile()
+  }, [pathname, closeMobile])
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeMobile()
+    }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [closeMobile])
+
   return (
     <>
-      {/* Mobile overlay */}
+      {/* Backdrop overlay — mobile drawer açıkken görünür */}
       {mobileOpen && (
-        <div className="mobile-overlay" onClick={() => setMobileOpen(false)} />
+        <div
+          className="sidebar-overlay"
+          onClick={closeMobile}
+          aria-hidden="true"
+        />
       )}
 
-      {/* Mobile drawer sidebar */}
-      <aside className={`mobile-drawer ${mobileOpen ? 'open' : ''}`}>
-        <div className="drawer-header">
-          <Link href="/" className="brand" onClick={() => setMobileOpen(false)}>
+      {/* Sidebar — tek component, desktop'ta fixed left, mobile'da slide-in */}
+      <aside className={`sidebar ${mobileOpen ? 'mobile-open' : ''}`}>
+        <div className="sidebar-header">
+          <Link href="/" className="brand" onClick={closeMobile}>
             <div className="brand-icon">C</div>
             <span className="brand-name">Callroom</span>
           </Link>
-          <button onClick={() => setMobileOpen(false)} className="drawer-close">
+          <button className="sidebar-close" onClick={closeMobile} aria-label="Menüyü kapat">
             <X size={18} />
           </button>
-        </div>
-
-        <nav className="drawer-nav">
-          {navItems.map(({ href, label, Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              className={`nav-item ${pathname === href ? 'active' : ''}`}
-              onClick={() => setMobileOpen(false)}
-            >
-              <Icon size={16} className="nav-icon" />
-              <span className="nav-label">{label}</span>
-            </Link>
-          ))}
-        </nav>
-
-        <div className="drawer-footer">
-          {user && (
-            <div className="user-info">
-              {user.image && (
-                <img src={user.image} alt={user.name || ''} className="user-avatar" />
-              )}
-              <div className="user-details">
-                <span className="user-name">{user.name}</span>
-                <span className="user-email">{user.email}</span>
-              </div>
-            </div>
-          )}
-          <button onClick={() => signOut()} className="signout-btn">
-            Çıkış yap
-          </button>
-        </div>
-      </aside>
-
-      {/* Desktop sidebar */}
-      <aside className="sidebar">
-        <div className="sidebar-header">
-          <Link href="/" className="brand">
-            <div className="brand-icon">C</div>
-            <span className="brand-name">Callroom</span>
-          </Link>
         </div>
 
         <nav className="sidebar-nav">
@@ -89,6 +75,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
               key={href}
               href={href}
               className={`nav-item ${pathname === href ? 'active' : ''}`}
+              onClick={closeMobile}
             >
               <Icon size={16} className="nav-icon" />
               <span className="nav-label">{label}</span>
@@ -114,7 +101,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
         </div>
       </aside>
 
-      {/* Mobile top bar */}
+      {/* Mobile top bar — sadece 768px altında görünür */}
       <header className="mobile-topbar">
         <Link href="/" className="brand">
           <div className="brand-icon">C</div>
@@ -124,28 +111,33 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
           {user?.image && (
             <img src={user.image} alt={user.name || ''} className="mobile-avatar" />
           )}
-          <button onClick={() => setMobileOpen(true)} className="hamburger-btn">
+          <button
+            className="hamburger-btn"
+            onClick={() => setMobileOpen(true)}
+            aria-label="Menüyü aç"
+          >
             <Menu size={20} />
           </button>
         </div>
       </header>
 
-      {/* Mobile bottom nav */}
-      <nav className="mobile-nav">
-        {navItems.map(({ href, label, Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            className={`mobile-nav-item ${pathname === href ? 'active' : ''}`}
-          >
-            <Icon size={20} />
-            <span>{label}</span>
-          </Link>
-        ))}
-      </nav>
-
       <style jsx>{`
-        /* ── Desktop sidebar ── */
+        /* ── Backdrop overlay ── */
+        .sidebar-overlay {
+          display: none;
+          position: fixed;
+          inset: 0;
+          background: rgba(0,0,0,0.4);
+          z-index: 49;
+          backdrop-filter: blur(2px);
+          animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        /* ── Sidebar — desktop: her zaman görünür fixed left ── */
         .sidebar {
           width: 280px;
           min-height: 100vh;
@@ -155,11 +147,19 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
           flex-direction: column;
           padding: 1.5rem 0;
           flex-shrink: 0;
+          position: fixed;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          z-index: 50;
         }
         .sidebar-header {
           padding: 0 1.5rem 1.5rem;
           border-bottom: 1px solid var(--border);
           margin-bottom: 1rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
         }
         .brand {
           display: flex;
@@ -186,6 +186,23 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
           font-weight: 600;
           letter-spacing: 0.02em;
           font-size: 0.9375rem;
+        }
+        .sidebar-close {
+          display: none;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          border-radius: var(--radius);
+          border: none;
+          background: transparent;
+          color: var(--text-secondary);
+          cursor: pointer;
+          transition: all 0.15s;
+        }
+        .sidebar-close:hover {
+          background: var(--surface-hover);
+          color: var(--text-primary);
         }
         .sidebar-nav {
           flex: 1;
@@ -278,17 +295,71 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
           opacity: 1;
         }
 
-        /* ── Mobile ── */
+        /* ── Mobile top bar ── */
         .mobile-topbar {
           display: none;
         }
-        .mobile-nav {
-          display: none;
+        .mobile-topbar-right {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+        .mobile-avatar {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid var(--border);
+        }
+        .hamburger-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 36px;
+          height: 36px;
+          border-radius: var(--radius);
+          border: 1px solid var(--border);
+          background: transparent;
+          color: var(--text-primary);
+          cursor: pointer;
+          transition: all 0.15s;
+        }
+        .hamburger-btn:hover {
+          background: var(--surface-hover);
         }
 
+        /* ── Desktop: sidebar fixed left, hamburger/overlay/close hidden ── */
+        @media (min-width: 769px) {
+          .sidebar-overlay {
+            display: none !important;
+          }
+          .sidebar {
+            transform: translateX(0) !important;
+          }
+          .sidebar-close {
+            display: none !important;
+          }
+          .hamburger-btn {
+            display: none !important;
+          }
+        }
+
+        /* ── Mobile: sidebar gizli, drawer olarak slide-in ── */
         @media (max-width: 768px) {
           .sidebar {
-            display: none;
+            transform: translateX(-100%);
+            transition: transform 0.25s ease-out;
+          }
+          .sidebar.mobile-open {
+            transform: translateX(0);
+            box-shadow: 4px 0 32px rgba(0,0,0,0.15);
+          }
+          .sidebar-header {
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.5rem;
+          }
+          .sidebar-close {
+            display: flex;
           }
           .mobile-topbar {
             display: flex;
@@ -301,116 +372,8 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
             top: 0;
             z-index: 40;
           }
-          .mobile-topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-          }
-          .mobile-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--border);
-          }
-          .hamburger-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            background: transparent;
-            color: var(--text-primary);
-            cursor: pointer;
-          }
-          .mobile-nav {
-            display: flex;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--surface);
-            border-top: 1px solid var(--border);
-            z-index: 40;
-          }
-          .mobile-nav-item {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0.25rem;
-            padding: 0.625rem 0.25rem;
-            color: var(--text-tertiary);
-            text-decoration: none;
-            font-size: 0.625rem;
-            transition: color 0.15s;
-          }
-          .mobile-nav-item.active {
-            color: var(--primary);
-          }
-          .mobile-nav-item:hover {
-            color: var(--text-primary);
-          }
-
-          /* Mobile overlay */
-          .mobile-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.35);
-            z-index: 50;
-            backdrop-filter: blur(2px);
-          }
-
-          /* Mobile drawer */
-          .mobile-drawer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            width: 280px;
-            background: var(--surface);
-            border-right: 1px solid var(--border);
-            z-index: 60;
-            display: flex;
-            flex-direction: column;
-            transform: translateX(-100%);
-            transition: transform 0.25s ease-out;
-          }
-          .mobile-drawer.open {
-            transform: translateX(0);
-          }
-          .drawer-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem 1.25rem;
-            border-bottom: 1px solid var(--border);
-          }
-          .drawer-close {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-            border-radius: var(--radius);
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            cursor: pointer;
-          }
-          .drawer-nav {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-            padding: 1rem 0.75rem;
-          }
-          .drawer-footer {
-            padding: 1rem 0.75rem;
-            border-top: 1px solid var(--border);
+          .sidebar-overlay {
+            display: block;
           }
         }
       `}</style>
