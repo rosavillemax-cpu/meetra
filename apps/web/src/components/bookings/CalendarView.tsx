@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight, Calendar, Clock, User, Plus, ExternalLink } from 'lucide-react'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { ChevronLeft, ChevronRight, Calendar, Clock, User, Plus } from 'lucide-react'
 import Link from 'next/link'
 import type { BookingWithRelations } from './BookingCard'
 
@@ -42,6 +43,7 @@ function getMonthLabel(year: number, month: number) {
 }
 
 export function CalendarView({ bookings, onSelectBooking }: CalendarViewProps) {
+  const router = useRouter()
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
@@ -199,10 +201,14 @@ export function CalendarView({ bookings, onSelectBooking }: CalendarViewProps) {
                           </div>
                           <button
                             className="mc-action"
-                            onClick={() => onSelectBooking?.(b)}
+                            onClick={() => router.push(`/confirmation/${b.id}`)}
                             aria-label="View meeting details"
                           >
-                            <ExternalLink size={14} />
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                              <polyline points="15 3 21 3 21 9" />
+                              <line x1="10" y1="14" x2="21" y2="3" />
+                            </svg>
                           </button>
                         </div>
                       ))}
