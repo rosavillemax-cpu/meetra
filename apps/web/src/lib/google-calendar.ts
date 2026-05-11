@@ -192,6 +192,10 @@ export async function getGoogleCalendarBusyTimes(
 
     const busy = response.data.calendars?.[integration.calendarId || 'primary']?.busy || []
     return busy
+      .filter((period): period is { start: string; end: string } =>
+        Boolean(period.start && period.end)
+      )
+      .map((period) => ({ start: period.start!, end: period.end! }))
   } catch (error) {
     console.error('Failed to fetch Google Calendar busy times:', error)
     return []
