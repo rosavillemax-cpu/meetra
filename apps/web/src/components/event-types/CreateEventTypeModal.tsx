@@ -69,7 +69,7 @@ export function CreateEventTypeModal({ isOpen, onClose, onSubmit }: CreateEventT
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Yeni Randevu Tipi</h2>
+          <h2>New Event Type</h2>
           <button onClick={onClose} className="close-btn">
             <X size={20} />
           </button>
@@ -77,12 +77,12 @@ export function CreateEventTypeModal({ isOpen, onClose, onSubmit }: CreateEventT
 
         <form onSubmit={handleSubmit} className="modal-form">
           <div className="form-group">
-            <label>Başlık *</label>
+            <label>Title *</label>
             <input
               type="text"
               value={title}
               onChange={e => handleTitleChange(e.target.value)}
-              placeholder="15 dakikalık tanışma görüşmesi"
+              placeholder="15-minute introduction call"
               required
             />
           </div>
@@ -95,37 +95,37 @@ export function CreateEventTypeModal({ isOpen, onClose, onSubmit }: CreateEventT
                 type="text"
                 value={slug}
                 onChange={e => setSlug(e.target.value.toLowerCase().replace(/\s+/g, '-'))}
-                placeholder="tanisma-gorusmesi"
+                placeholder="introduction-call"
                 required
               />
             </div>
           </div>
 
           <div className="form-group">
-            <label>Açıklama</label>
+            <label>Description</label>
             <textarea
               value={description}
               onChange={e => setDescription(e.target.value)}
-              placeholder="Bu randevu tipi hakkında kısa bir açıklama..."
+              placeholder="A short description about this event type..."
               rows={3}
             />
           </div>
 
           <div className="form-row">
             <div className="form-group">
-              <label>Süre *</label>
+              <label>Duration *</label>
               <select
                 value={durationMin}
                 onChange={e => setDurationMin(Number(e.target.value))}
               >
                 {DURATIONS.map(d => (
-                  <option key={d} value={d}>{d} dakika</option>
+                  <option key={d} value={d}>{d} minutes</option>
                 ))}
               </select>
             </div>
 
             <div className="form-group">
-              <label>Renk</label>
+              <label>Color</label>
               <div className="color-picker">
                 {COLORS.map(c => (
                   <button
@@ -142,10 +142,10 @@ export function CreateEventTypeModal({ isOpen, onClose, onSubmit }: CreateEventT
 
           <div className="modal-actions">
             <button type="button" onClick={onClose} className="btn-secondary">
-              İptal
+              Cancel
             </button>
             <button type="submit" className="btn-primary">
-              Oluştur
+              Create
             </button>
           </div>
         </form>

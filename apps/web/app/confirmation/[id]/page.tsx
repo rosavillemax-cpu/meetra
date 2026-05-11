@@ -38,7 +38,7 @@ export default function ConfirmationPage() {
 
     fetch(`/api/bookings/${id}`)
       .then(res => {
-        if (!res.ok) throw new Error('Rezervasyon bulunamadı')
+        if (!res.ok) throw new Error('Booking not found')
         return res.json()
       })
       .then(setBooking)
@@ -47,7 +47,7 @@ export default function ConfirmationPage() {
   }, [params])
 
   const formatDate = (isoString: string) => {
-    return new Date(isoString).toLocaleDateString('tr-TR', {
+    return new Date(isoString).toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -56,7 +56,7 @@ export default function ConfirmationPage() {
   }
 
   const formatTime = (isoString: string) => {
-    return new Date(isoString).toLocaleTimeString('tr-TR', {
+    return new Date(isoString).toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit'
     })
@@ -65,7 +65,7 @@ export default function ConfirmationPage() {
   if (loading) {
     return (
       <div className="container" style={{ paddingTop: '4rem', textAlign: 'center' }}>
-        <p style={{ color: 'var(--text-secondary)' }}>Yükleniyor...</p>
+        <p style={{ color: 'var(--text-secondary)' }}>Loading...</p>
       </div>
     )
   }
@@ -73,7 +73,7 @@ export default function ConfirmationPage() {
   if (error || !booking) {
     return (
       <div className="container" style={{ paddingTop: '4rem', textAlign: 'center' }}>
-        <p style={{ color: 'var(--red-text)' }}>{error || 'Bulunamadı'}</p>
+        <p style={{ color: 'var(--red-text)' }}>{error || 'Not found'}</p>
       </div>
     )
   }
@@ -96,9 +96,9 @@ export default function ConfirmationPage() {
             <polyline points="20 6 9 17 4 12" />
           </svg>
         </div>
-        <h1 style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>Randevu Oluşturuldu</h1>
+        <h1 style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>Booking Confirmed</h1>
         <p style={{ color: 'var(--text-secondary)' }}>
-          {booking.guestName}, randevunuz başarıyla oluşturuldu.
+          {booking.guestName}, your booking has been confirmed.
         </p>
       </div>
 
@@ -158,11 +158,11 @@ export default function ConfirmationPage() {
         </div>
 
         <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-          Onay e-postası <strong style={{ color: 'var(--text-primary)' }}>{booking.guestEmail}</strong> adresine gönderildi.
+          Confirmation email sent to <strong style={{ color: 'var(--text-primary)' }}>{booking.guestEmail}</strong>.
         </p>
 
         <p style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)' }}>
-          {booking.eventType.user.handle} kullanıcısı ile {booking.eventType.durationMin} dakikalık randevu.
+          {booking.eventType.durationMin} minute meeting with {booking.eventType.user.handle}.
         </p>
       </div>
 
@@ -174,7 +174,7 @@ export default function ConfirmationPage() {
         marginBottom: '1.5rem'
       }}>
         <p style={{ fontSize: '0.875rem', color: 'var(--amber-text)' }}>
-          Randevunuzu iptal etmek için bir sonraki sayfayı kullanabilirsiniz.
+          You can cancel your booking on the next page.
         </p>
       </div>
 
@@ -191,7 +191,7 @@ export default function ConfirmationPage() {
             fontSize: '0.875rem'
           }}
         >
-          Ana Sayfaya Dön
+          Back to home
         </a>
       </div>
     </div>

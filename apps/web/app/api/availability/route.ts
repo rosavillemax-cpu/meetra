@@ -6,7 +6,7 @@ export async function GET(request: Request) {
   const userId = searchParams.get('userId')
 
   if (!userId) {
-    return NextResponse.json({ error: 'userId zorunlu' }, { status: 400 })
+    return NextResponse.json({ error: 'userId is required' }, { status: 400 })
   }
 
   const rules = await prisma.availabilityRule.findMany({
@@ -22,11 +22,11 @@ export async function POST(request: Request) {
   const { userId, weekday, startTime, endTime, isOverride, overrideDate } = body
 
   if (!userId || weekday === undefined || !startTime || !endTime) {
-    return NextResponse.json({ error: 'userId, weekday, startTime ve endTime zorunlu' }, { status: 400 })
+    return NextResponse.json({ error: 'userId, weekday, startTime and endTime are required' }, { status: 400 })
   }
 
   if (weekday < 0 || weekday > 6) {
-    return NextResponse.json({ error: 'weekday 0-6 arasında olmalı (Pazar=0, Cumartesi=6)' }, { status: 400 })
+    return NextResponse.json({ error: 'weekday must be 0-6 (Sunday=0, Saturday=6)' }, { status: 400 })
   }
 
   const rule = await prisma.availabilityRule.create({

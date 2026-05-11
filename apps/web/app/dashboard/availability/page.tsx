@@ -49,17 +49,17 @@ export default function AvailabilityPage() {
     <div className="availability-page">
       <header className="page-header">
         <div>
-          <h1>Müsaitlik</h1>
-          <p className="page-subtitle">Hangi günler ve saatlerde randevu alabilirler?</p>
+          <h1>Availability</h1>
+          <p className="page-subtitle">What days and times can guests book?</p>
         </div>
       </header>
 
       {loading ? (
-        <div className="loading">Yükleniyor...</div>
+        <div className="loading">Loading...</div>
       ) : (
         <>
           <div className="info-card">
-            <p>Her gün için çalışma saatlerinizi ayarlayın. Randevularınız bu saatlere göre planlanacaktır.</p>
+            <p>Set your working hours for each day. Your bookings will be scheduled accordingly.</p>
           </div>
 
           <WeekSchedule

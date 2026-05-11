@@ -30,7 +30,7 @@ export function EventTypeCard({ eventType, onEdit, onDelete }: EventTypeCardProp
         <div className="color-dot" style={{ background: eventType.color }} />
         <div className="card-title">
           <h3>{eventType.title}</h3>
-          <span className="card-duration">{eventType.durationMin} dk</span>
+          <span className="card-duration">{eventType.durationMin}min</span>
         </div>
         <div className="card-menu">
           <button onClick={() => setShowMenu(!showMenu)} className="menu-btn">
@@ -39,10 +39,10 @@ export function EventTypeCard({ eventType, onEdit, onDelete }: EventTypeCardProp
           {showMenu && (
             <div className="menu-dropdown">
               <button onClick={() => { onEdit?.(eventType); setShowMenu(false); }}>
-                <Pencil size={14} /> Düzenle
+                <Pencil size={14} /> Edit
               </button>
               <button onClick={() => { onDelete?.(eventType); setShowMenu(false); }} className="danger">
-                <Trash2 size={14} /> Sil
+                <Trash2 size={14} /> Delete
               </button>
             </div>
           )}
@@ -56,18 +56,18 @@ export function EventTypeCard({ eventType, onEdit, onDelete }: EventTypeCardProp
       <div className="card-footer">
         <div className="card-stats">
           <span className="stat">
-            <Link2 size={12} /> {eventType._count?.bookings || 0} randevu
+            <Link2 size={12} /> {eventType._count?.bookings || 0} bookings
           </span>
         </div>
         <div className="card-actions">
           <button onClick={copyLink} className="copy-btn">
             <Copy size={14} />
-            {copied ? 'Kopyalandı!' : 'Linki kopyala'}
+            {copied ? 'Copied!' : 'Copy link'}
           </button>
         </div>
       </div>
 
-      {!eventType.active && <div className="inactive-badge">Pasif</div>}
+      {!eventType.active && <div className="inactive-badge">Inactive</div>}
 
       <style jsx>{`
         .event-type-card {

@@ -37,7 +37,7 @@ export default async function DashboardPage() {
     prisma.booking.count({ where: { hostId: userId, startAt: { lt: new Date() }, status: 'confirmed' } })
   ])
 
-  const todayStr = new Date().toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long' })
+  const todayStr = new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' })
   const isReturning = (session.user as any)?.isReturning
   const greeting = getGreeting(session.user.name, isReturning)
 
@@ -55,35 +55,35 @@ export default async function DashboardPage() {
         </div>
         <Link href="/dashboard/event-types" className="new-btn">
           <Plus size={14} strokeWidth={2.5} />
-          Yeni randevu tipi
+          New event type
         </Link>
       </div>
 
       {/* ─── Stats ─── */}
       <div className="stats">
         <StatCard
-          label="Yaklaşan"
+          label="Upcoming"
           value={upcomingBookings.length}
           icon={<Calendar size={14} />}
           accent="var(--primary)"
           sparkIndex={0}
         />
         <StatCard
-          label="Toplam randevu"
+          label="Total"
           value={totalBookings}
           icon={<Users size={14} />}
           accent="var(--success)"
           sparkIndex={1}
         />
         <StatCard
-          label="Randevu tipleri"
+          label="Event types"
           value={eventTypes.length}
           icon={<Layers size={14} />}
           accent="#60a5fa"
           sparkIndex={2}
         />
         <StatCard
-          label="Geçmiş"
+          label="Past"
           value={pastBookingsCount}
           icon={<CheckCircle2 size={14} />}
           accent="var(--text-tertiary)"
@@ -102,10 +102,10 @@ export default async function DashboardPage() {
           <div className="panel-head">
             <div className="panel-title">
               <Clock size={14} className="ph-icon" />
-              <span>Yaklaşan randevular</span>
+              <span>Upcoming bookings</span>
             </div>
             <Link href="/dashboard/bookings" className="see-all">
-              Tümü <ArrowRight size={11} />
+              All <ArrowRight size={11} />
             </Link>
           </div>
 
@@ -132,10 +132,10 @@ export default async function DashboardPage() {
                 <rect x="41" y="78" width="13" height="10" rx="2" fill="currentColor" opacity="0.12" />
                 <rect x="22" y="46" width="13" height="10" rx="2" stroke="currentColor" strokeOpacity="0.4" />
               </svg>
-              <p className="empty-title">Randevu yok</p>
-              <p className="empty-sub">Yaklaşan randevunuz bulunmuyor.<br />İlk randevunuzu almak için müsaitlik ayarlarından başlayın.</p>
+              <p className="empty-title">No bookings</p>
+              <p className="empty-sub">You don&apos;t have any upcoming bookings.<br />Get started by setting your availability.</p>
               <Link href="/dashboard/event-types" className="empty-cta">
-                Randevu tipi oluştur →
+                Create event type →
               </Link>
             </div>
           )}
@@ -149,10 +149,10 @@ export default async function DashboardPage() {
             <div className="panel-head">
               <div className="panel-title">
                 <Layers size={14} className="ph-icon" />
-                <span>Randevu tiplerin</span>
+                <span>Your event types</span>
               </div>
               <Link href="/dashboard/event-types" className="see-all">
-                Yönet <ArrowRight size={11} />
+                Manage <ArrowRight size={11} />
               </Link>
             </div>
 
@@ -162,16 +162,16 @@ export default async function DashboardPage() {
                   <Link key={et.id} href="/dashboard/event-types" className="et-row">
                     <span className="et-dot" style={{ background: et.color }} />
                     <span className="et-name">{et.title}</span>
-                    <span className="et-dur">{et.durationMin}dk</span>
+                    <span className="et-dur">{et.durationMin}min</span>
                   </Link>
                 ))}
               </div>
             ) : (
               <div className="et-empty">
-                <p>Henüz randevu tipin yok</p>
+                <p>No event types yet</p>
                 <Link href="/dashboard/event-types" className="et-cta">
                   <Plus size={12} />
-                  Oluştur
+                  Create
                 </Link>
               </div>
             )}
@@ -181,23 +181,23 @@ export default async function DashboardPage() {
           <div className="panel">
             <div className="panel-head">
               <div className="panel-title">
-                <span>Hızlı erişim</span>
+                <span>Quick access</span>
               </div>
             </div>
             <div className="ql-list">
               <Link href="/dashboard/availability" className="ql-item">
                 <div className="ql-icon"><Calendar size={13} /></div>
-                <span>Müsaitlik ayarla</span>
+                <span>Set availability</span>
                 <ArrowRight size={11} className="ql-arrow" />
               </Link>
               <Link href="/dashboard/settings" className="ql-item">
                 <div className="ql-icon"><Settings size={13} /></div>
-                <span>Profili düzenle</span>
+                <span>Edit profile</span>
                 <ArrowRight size={11} className="ql-arrow" />
               </Link>
               <Link href="/dashboard/bookings" className="ql-item">
                 <div className="ql-icon"><Users size={13} /></div>
-                <span>Tüm randevular</span>
+                <span>All bookings</span>
                 <ArrowRight size={11} className="ql-arrow" />
               </Link>
             </div>

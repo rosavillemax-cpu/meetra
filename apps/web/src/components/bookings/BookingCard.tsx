@@ -19,7 +19,7 @@ export function BookingCard({ booking, onCancel, showHost = false }: BookingCard
   const [showActions, setShowActions] = useState(false)
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('tr-TR', {
+    return new Intl.DateTimeFormat('en-US', {
       weekday: 'short',
       day: 'numeric',
       month: 'short',
@@ -27,16 +27,16 @@ export function BookingCard({ booking, onCancel, showHost = false }: BookingCard
   }
 
   const formatTime = (date: Date) => {
-    return new Intl.DateTimeFormat('tr-TR', {
+    return new Intl.DateTimeFormat('en-US', {
       hour: '2-digit',
       minute: '2-digit',
     }).format(new Date(date))
   }
 
   const statusColors: Record<string, { bg: string; text: string; label: string }> = {
-    confirmed: { bg: 'var(--success-bg)', text: 'var(--success)', label: 'Onaylandı' },
-    pending: { bg: 'var(--warning-bg)', text: 'var(--warning)', label: 'Bekliyor' },
-    cancelled: { bg: 'var(--error-bg)', text: 'var(--error)', label: 'İptal edildi' },
+    confirmed: { bg: 'var(--success-bg)', text: 'var(--success)', label: 'Confirmed' },
+    pending: { bg: 'var(--warning-bg)', text: 'var(--warning)', label: 'Pending' },
+    cancelled: { bg: 'var(--error-bg)', text: 'var(--error)', label: 'Cancelled' },
   }
 
   const status = statusColors[booking.status] || statusColors.confirmed
@@ -85,7 +85,7 @@ export function BookingCard({ booking, onCancel, showHost = false }: BookingCard
             className="cancel-btn"
           >
             <X size={14} />
-            İptal et
+            Cancel
           </button>
         </div>
       )}

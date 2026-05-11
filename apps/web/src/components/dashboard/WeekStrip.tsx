@@ -25,7 +25,7 @@ export interface BookingWithRelations {
   }
 }
 
-const DAYS_TR = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt']
+const DAYS_TR = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 interface WeekStripProps {
   bookings: BookingWithRelations[]
@@ -57,9 +57,9 @@ export function WeekStrip({ bookings }: WeekStripProps) {
     <>
       <div className="week-card">
         <div className="week-head">
-          <span className="week-label">Bu hafta</span>
+          <span className="week-label">This week</span>
           <Link href="/dashboard/bookings" className="see-all">
-            Tümünü gör <ArrowRight size={11} />
+            View all <ArrowRight size={11} />
           </Link>
         </div>
         <div className="week-row">
@@ -93,11 +93,11 @@ export function WeekStrip({ bookings }: WeekStripProps) {
             <div className="panel-title">
               <Calendar size={14} className="ph-icon" />
               <span>
-                {DAYS_TR[selectedDay.getDay()]} {selectedDay.getDate()} — {selectedDayBookings.length} randevu
+                {DAYS_TR[selectedDay.getDay()]} {selectedDay.getDate()} — {selectedDayBookings.length} bookings
               </span>
             </div>
             <button className="clear-btn" onClick={() => setSelectedDay(null)}>
-              Temizle
+              Clear
             </button>
           </div>
 
@@ -106,8 +106,8 @@ export function WeekStrip({ bookings }: WeekStripProps) {
               {selectedDayBookings.map(b => (
                 <div key={b.id} className="booking-row">
                   <div className="booking-time">
-                    {new Date(b.startAt).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
-                    <span className="booking-dur">{b.eventType?.durationMin}dk</span>
+                    {new Date(b.startAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                    <span className="booking-dur">{b.eventType?.durationMin}min</span>
                   </div>
                   <div className="booking-info">
                     <span className="booking-title">{b.eventType?.title}</span>
@@ -119,7 +119,7 @@ export function WeekStrip({ bookings }: WeekStripProps) {
             </div>
           ) : (
             <div className="day-empty">
-              <p>Bu gün için randevu yok</p>
+              <p>No bookings for this day</p>
             </div>
           )}
         </div>

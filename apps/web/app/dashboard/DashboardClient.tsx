@@ -44,28 +44,28 @@ export default function DashboardClient({
     <div className="dashboard-overview">
       <header className="page-header">
         <div className="header-content">
-          <h1>Merhaba{firstName ? `, ${firstName}` : ''}!</h1>
-          <p className="page-subtitle">Randevularinizi yonetip, musaitlik ayarlarini yapin</p>
+          <h1>Hello{firstName ? `, ${firstName}` : ''}!</h1>
+          <p className="page-subtitle">Manage your bookings and set your availability</p>
         </div>
         <Link href="/dashboard/event-types" className="create-btn">
           <Plus size={18} strokeWidth={2} />
-          <span>Yeni randevu tipi</span>
+          <span>New event type</span>
         </Link>
       </header>
 
       <section className="stats-grid">
-        <StatCard label="Yaklasan" value={upcomingBookings.length} icon="calendar" />
-        <StatCard label="Toplam randevu" value={totalBookings} icon="check" />
-        <StatCard label="Randevu tipleri" value={eventTypes.length} icon="users" />
-        <StatCard label="Gecmis randevular" value={pastBookingsCount} icon="clock" />
+        <StatCard label="Upcoming" value={upcomingBookings.length} icon="calendar" />
+        <StatCard label="Total bookings" value={totalBookings} icon="check" />
+        <StatCard label="Event types" value={eventTypes.length} icon="users" />
+        <StatCard label="Past bookings" value={pastBookingsCount} icon="clock" />
       </section>
 
       {upcomingBookings.length > 0 && (
         <section className="section">
           <div className="section-header">
-            <h2>Yaklasan randevular</h2>
+            <h2>Upcoming bookings</h2>
             <Link href="/dashboard/bookings" className="view-all">
-              Tümünü gör <ChevronRight size={16} strokeWidth={2} />
+              View all <ChevronRight size={16} strokeWidth={2} />
             </Link>
           </div>
           <div className="bookings-grid">
@@ -79,9 +79,9 @@ export default function DashboardClient({
       {eventTypes.length > 0 && (
         <section className="section">
           <div className="section-header">
-            <h2>Randevu tipleriniz</h2>
+            <h2>Your event types</h2>
             <Link href="/dashboard/event-types" className="view-all">
-              Yönet <ChevronRight size={16} strokeWidth={2} />
+              Manage <ChevronRight size={16} strokeWidth={2} />
             </Link>
           </div>
           <div className="event-types-grid">
@@ -89,7 +89,7 @@ export default function DashboardClient({
               <Link key={et.id} href="/dashboard/event-types" className="event-type-mini">
                 <div className="et-color" style={{ background: et.color }} />
                 <span className="et-title">{et.title}</span>
-                <span className="et-duration">{et.durationMin} dk</span>
+                <span className="et-duration">{et.durationMin}min</span>
               </Link>
             ))}
           </div>
@@ -101,11 +101,11 @@ export default function DashboardClient({
           <div className="empty-icon">
             <CalendarPlus size={48} strokeWidth={1.25} />
           </div>
-          <h2>Henüz randevu tipiniz yok</h2>
-          <p>Baslamak için ilk randevu tipinizi olusturun</p>
+          <h2>You don&apos;t have any event types yet</h2>
+          <p>Create your first event type to get started</p>
           <Link href="/dashboard/event-types" className="create-btn primary">
             <Plus size={18} strokeWidth={2} />
-            <span>Ilk randevu tipi olustur</span>
+            <span>Create first event type</span>
           </Link>
         </section>
       )}

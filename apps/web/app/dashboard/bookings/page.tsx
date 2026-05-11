@@ -40,7 +40,7 @@ export default function BookingsPage() {
   }, [hostId, filter])
 
   const handleCancel = async (booking: BookingWithRelations) => {
-    if (!confirm('Bu randevuyu iptal etmek istediğinize emin misiniz?')) return
+    if (!confirm('Are you sure you want to cancel this booking?')) return
 
     await fetch(`/api/bookings/${booking.id}?token=${booking.id}`, { method: 'DELETE' })
     setBookings(prev => prev.map(b => b.id === booking.id ? { ...b, status: 'cancelled' } : b))
@@ -50,8 +50,8 @@ export default function BookingsPage() {
     <div className="bookings-page">
       <header className="page-header">
         <div>
-          <h1>Randevular</h1>
-          <p className="page-subtitle">Tüm randevularınızı görüntüleyin</p>
+          <h1>Bookings</h1>
+          <p className="page-subtitle">View all your bookings</p>
         </div>
       </header>
 
@@ -63,17 +63,17 @@ export default function BookingsPage() {
             className={`filter-btn ${filter === f ? 'active' : ''}`}
             onClick={() => setFilter(f)}
           >
-            {f === 'upcoming' ? 'Yaklaşan' : f === 'past' ? 'Geçmiş' : f === 'cancelled' ? 'İptal edilen' : 'Tümü'}
+            {f === 'upcoming' ? 'Upcoming' : f === 'past' ? 'Past' : f === 'cancelled' ? 'Cancelled' : 'All'}
           </button>
         ))}
       </div>
 
       {loading ? (
-        <div className="loading">Yükleniyor...</div>
+        <div className="loading">Loading...</div>
       ) : bookings.length === 0 ? (
         <div className="empty-state">
           <Calendar size={48} />
-          <p>Henüz randevu yok</p>
+          <p>No bookings yet</p>
         </div>
       ) : (
         <div className="bookings-list">

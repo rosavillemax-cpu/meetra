@@ -61,7 +61,7 @@ export default async function UserPage({ params }: PageProps) {
         </div>
         <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{user.handle}</h1>
         <p style={{ color: 'var(--text-secondary)' }}>
-          {user.eventTypes?.length || 0} etkinlik türü
+          {user.eventTypes?.length || 0} event types
         </p>
       </div>
 
@@ -70,7 +70,7 @@ export default async function UserPage({ params }: PageProps) {
         paddingTop: '2rem'
       }}>
         <h2 style={{ fontSize: '1rem', color: 'var(--text-secondary)', marginBottom: '1.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-          Randevu Türleri
+          Event Types
         </h2>
 
         {(!user.eventTypes || user.eventTypes.length === 0) ? (
@@ -82,7 +82,7 @@ export default async function UserPage({ params }: PageProps) {
             textAlign: 'center',
             color: 'var(--text-secondary)'
           }}>
-            Henüz randevu türü oluşturulmamış.
+            No event types created yet.
           </div>
         ) : (
           <div style={{
@@ -136,7 +136,7 @@ export default async function UserPage({ params }: PageProps) {
                   color: 'var(--text-secondary)'
                 }}>
                   <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '0.875rem' }}>
-                    {eventType.durationMin} dk
+                    {eventType.durationMin} min
                   </span>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <polyline points="9 18 15 12 9 6" />

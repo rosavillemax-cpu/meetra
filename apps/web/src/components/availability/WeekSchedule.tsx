@@ -4,8 +4,8 @@ import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import type { AvailabilityRule } from '@prisma/client'
 
-const WEEKDAYS = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi']
-const WEEKDAYS_SHORT = ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct']
+const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+const WEEKDAYS_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 interface WeekScheduleProps {
   rules: AvailabilityRule[]
@@ -44,9 +44,9 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
   return (
     <div className="week-table">
       <div className="table-header">
-        <span className="col-name">Gün</span>
-        <span className="col-slots">Saat aralıkları</span>
-        <span className="col-toggle">Durum</span>
+        <span className="col-name">Day</span>
+        <span className="col-slots">Time slots</span>
+        <span className="col-toggle">Status</span>
       </div>
 
       {WEEKDAYS.map((day, index) => {
@@ -81,7 +81,7 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
                           <button
                             onClick={(e) => { e.stopPropagation(); onDeleteRule(rule); }}
                             className="slot-delete"
-                            aria-label="Sil"
+                            aria-label="Delete"
                           >
                             ×
                           </button>
@@ -90,7 +90,7 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
                     ))}
                   </div>
                 ) : (
-                  <span className="no-slots">Henüz saat tanımlanmamış</span>
+                  <span>No hours defined</span>
                 )}
               </div>
 
@@ -100,10 +100,10 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
                   <button
                     className="add-btn"
                     onClick={(e) => { e.stopPropagation(); setSelectedDay(isSelected ? null : index); }}
-                    title="Saat ekle"
+                    title="Add time slot"
                   >
                     <Plus size={13} />
-                    <span>Ekle</span>
+                    <span>Add</span>
                   </button>
                 )}
 
@@ -111,7 +111,7 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
                 <button
                   className={`toggle ${isClosed ? 'is-closed' : ''}`}
                   onClick={(e) => { e.stopPropagation(); toggleClosed(index); }}
-                  aria-label={isClosed ? 'Günü aç' : 'Günü kapat'}
+                  aria-label={isClosed ? 'Open day' : 'Close day'}
                 >
                   <span className="toggle-thumb" />
                 </button>
@@ -121,7 +121,7 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
             {/* Inline add form */}
             {isSelected && !isClosed && (
               <div className="row-form" onClick={e => e.stopPropagation()}>
-                <span className="form-label">Yeni saat aralığı ekle</span>
+                <span className="form-label">Add new time slot</span>
                 <div className="form-row">
                   <input
                     type="time"
@@ -138,10 +138,10 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
                   />
                   <button onClick={handleAddSlot} className="submit-btn">
                     <Plus size={13} />
-                    Ekle
+                    Add
                   </button>
                   <button onClick={() => setSelectedDay(null)} className="cancel-btn">
-                    İptal
+                    Cancel
                   </button>
                 </div>
               </div>

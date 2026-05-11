@@ -40,7 +40,7 @@ function SignInContent() {
         marginBottom: '2rem',
         fontSize: '0.9375rem'
       }}>
-        Devam etmek için giriş yapın
+        Devam etmek için giriş yapın → Sign in to continue
       </p>
 
       {error && (
@@ -54,8 +54,8 @@ function SignInContent() {
           color: 'var(--red-text)'
         }}>
           {error === 'OAuthAccountNotLinked'
-            ? 'Bu e-posta başka bir hesaba bağlı.'
-            : 'Giriş başarısız oldu.'}
+            ? 'This email is linked to another account.'
+            : 'Sign in failed.'}
         </div>
       )}
 
@@ -82,7 +82,7 @@ function SignInContent() {
           <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
           <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
         </svg>
-        Google ile Giriş Yap
+        Sign in with Google
       </button>
 
       <p style={{
@@ -90,11 +90,7 @@ function SignInContent() {
         color: 'var(--text-tertiary)',
         fontSize: '0.8125rem'
       }}>
-        Giriş yaparak{' '}
-        <a href="#" style={{ textDecoration: 'underline' }}>Kullanım Koşulları</a>'nı
-        ve{' '}
-        <a href="#" style={{ textDecoration: 'underline' }}>Gizlilik Politikası</a>'nı
-        kabul etmiş olursunuz.
+        By signing in, you agree to the <a href="#" style={{ textDecoration: 'underline' }}>Terms of Service</a> and <a href="#" style={{ textDecoration: 'underline' }}>Privacy Policy</a>.
       </p>
     </div>
   )
@@ -109,7 +105,7 @@ export default function SignIn() {
         alignItems: 'center',
         justifyContent: 'center'
       }}>
-        <p style={{ color: 'var(--text-secondary)' }}>Yükleniyor...</p>
+        <p style={{ color: 'var(--text-secondary)' }}>Loading...</p>
       </div>
     }>
       <SignInContent />

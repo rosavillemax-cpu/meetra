@@ -69,32 +69,32 @@ export default function SettingsPage() {
       setTimeout(() => setSaved(false), 3000)
     } else {
       const data = await res.json()
-      setError(data.error || 'Bir hata oluştu')
+      setError(data.error || 'An error occurred')
     }
 
     setSaving(false)
   }
 
   if (loading) {
-    return <div className="settings-page"><div className="loading">Yükleniyor...</div></div>
+    return <div className="settings-page"><div className="loading">Loading...</div></div>
   }
 
   return (
     <div className="settings-page">
       <header className="page-header">
-        <h1>Ayarlar</h1>
-        <p className="page-subtitle">Profil ve tercihlerinizi yönetin</p>
+        <h1>Settings</h1>
+        <p className="page-subtitle">Manage your profile and preferences</p>
       </header>
 
       <form onSubmit={handleSubmit} className="settings-form">
         <div className="form-section">
           <h2>
             <User size={18} />
-            Profil bilgileri
+            Profile information
           </h2>
 
           <div className="form-group">
-            <label>Ad Soyad</label>
+            <label>Full name</label>
             <input
               type="text"
               value={name}
@@ -106,7 +106,7 @@ export default function SettingsPage() {
           <div className="form-group">
             <label>
               <Hash size={14} />
-              Kullanıcı adı (handle)
+              Username (handle)
             </label>
             <div className="handle-input">
               <span className="handle-prefix">callroom.com/</span>
@@ -118,18 +118,18 @@ export default function SettingsPage() {
                 required
               />
             </div>
-            <span className="form-hint">Sadece harf, rakam ve tire kullanabilirsiniz</span>
+            <span className="form-hint">Only letters, numbers and hyphens allowed</span>
           </div>
         </div>
 
         <div className="form-section">
           <h2>
             <Globe size={18} />
-            Bölge ve dil
+            Region and language
           </h2>
 
           <div className="form-group">
-            <label>Zaman dilimi</label>
+            <label>Timezone</label>
             <select value={timezone} onChange={e => setTimezone(e.target.value)}>
               {TIMEZONES.map(tz => (
                 <option key={tz} value={tz}>{tz.replace('_', ' ')}</option>
@@ -139,11 +139,11 @@ export default function SettingsPage() {
         </div>
 
         {error && <div className="error-message">{error}</div>}
-        {saved && <div className="success-message">Değişiklikler kaydedildi!</div>}
+        {saved && <div className="success-message">Changes saved!</div>}
 
         <div className="form-actions">
           <button type="submit" disabled={saving} className="save-btn">
-            {saving ? 'Kaydediliyor...' : 'Kaydet'}
+            {saving ? 'Saving...' : 'Save'}
           </button>
         </div>
       </form>

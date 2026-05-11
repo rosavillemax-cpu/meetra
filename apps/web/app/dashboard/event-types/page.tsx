@@ -60,7 +60,7 @@ export default function EventTypesPage() {
   }
 
   const handleDelete = async (eventType: EventType) => {
-    if (!confirm('Bu randevu tipini silmek istediğinize emin misiniz?')) return
+    if (!confirm('Are you sure you want to delete this event type?')) return
 
     const res = await fetch(`/api/event-types/${eventType.id}`, { method: 'DELETE' })
     if (res.ok) {
@@ -72,17 +72,17 @@ export default function EventTypesPage() {
     <div className="event-types-page">
       <header className="page-header">
         <div>
-          <h1>Randevu Tipleri</h1>
-          <p className="page-subtitle">Randevu tiplerinizi oluşturun ve yönetin</p>
+          <h1>Event Types</h1>
+          <p className="page-subtitle">Create and manage your event types</p>
         </div>
         <button onClick={() => setShowCreateModal(true)} className="create-btn">
           <Plus size={16} />
-          Yeni randevu tipi
+          New event type
         </button>
       </header>
 
       {loading ? (
-        <div className="loading">Yükleniyor...</div>
+        <div className="loading">Loading...</div>
       ) : eventTypes.length === 0 ? (
         <div className="empty-state">
           <svg viewBox="0 0 96 96" fill="none" className="empty-icon">
@@ -99,11 +99,11 @@ export default function EventTypesPage() {
             <path d="M38 72 L40 68 L42 72" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             <path d="M54 72 L56 68 L58 72" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          <h2>Henüz randevu tipi yok</h2>
-          <p>Randevu tiplerinizi oluşturduğunuzda burada görünecek</p>
+          <h2>No event types yet</h2>
+          <p>Your event types will appear here once you create them</p>
           <button onClick={() => setShowCreateModal(true)} className="create-btn empty-btn">
             <Plus size={16} />
-            Oluştur
+            Create
           </button>
         </div>
       ) : (

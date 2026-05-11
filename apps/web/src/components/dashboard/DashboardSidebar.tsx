@@ -9,10 +9,10 @@ import type { User } from 'next-auth'
 
 const navItems: { href: string; label: string; Icon: LucideIcon }[] = [
   { href: '/dashboard',              label: 'Overview',        Icon: LayoutDashboard },
-  { href: '/dashboard/bookings',     label: 'Randevular',      Icon: CalendarDays },
-  { href: '/dashboard/event-types',  label: 'Randevu Tipleri', Icon: Clock4 },
-  { href: '/dashboard/availability', label: 'Müsaitlik',       Icon: CalendarClock },
-  { href: '/dashboard/settings',     label: 'Ayarlar',         Icon: Settings },
+  { href: '/dashboard/bookings',     label: 'Bookings',        Icon: CalendarDays },
+  { href: '/dashboard/event-types',  label: 'Event Types',    Icon: Clock4 },
+  { href: '/dashboard/availability', label: 'Availability',   Icon: CalendarClock },
+  { href: '/dashboard/settings',     label: 'Settings',      Icon: Settings },
 ]
 
 interface DashboardSidebarProps {
@@ -64,7 +64,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
             <div className="brand-icon">C</div>
             <span className="brand-name">Callroom</span>
           </Link>
-          <button className="sidebar-close" onClick={closeMobile} aria-label="Menüyü kapat">
+          <button className="sidebar-close" onClick={closeMobile} aria-label="Close menu">
             <X size={18} />
           </button>
         </div>
@@ -96,7 +96,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
             </div>
           )}
           <button onClick={() => signOut()} className="signout-btn">
-            Çıkış yap
+            Sign out
           </button>
         </div>
       </aside>
@@ -114,7 +114,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
           <button
             className="hamburger-btn"
             onClick={() => setMobileOpen(true)}
-            aria-label="Menüyü aç"
+            aria-label="Open menu"
           >
             <Menu size={20} />
           </button>

@@ -47,7 +47,7 @@ export default function BookingPage({
     params.then((p) => {
       const RESERVED = ['api', 'auth', 'dashboard', 'confirmation', '_next']
       if (RESERVED.includes(p.handle)) {
-        setError('Kullanıcı veya etkinlik bulunamadı')
+setError('User or event not found')
         setLoading(false)
         return
       }
@@ -126,20 +126,20 @@ export default function BookingPage({
 
       if (!res.ok) {
         const data = await res.json()
-        throw new Error(data.error || 'Rezervasyon oluşturulamadı')
+        throw new Error(data.error || 'Failed to create booking')
       }
 
       const booking = await res.json()
       router.push(`/confirmation/${booking.id}`)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Bir hata oluştu')
+      setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setSubmitting(false)
     }
   }
 
   const formatTime = (isoString: string) => {
-    return new Date(isoString).toLocaleTimeString('tr-TR', {
+    return new Date(isoString).toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit'
     })
@@ -159,7 +159,7 @@ export default function BookingPage({
   if (loading) {
     return (
       <div className="container" style={{ paddingTop: '4rem', textAlign: 'center' }}>
-        <p style={{ color: 'var(--text-secondary)' }}>Yükleniyor...</p>
+        <p style={{ color: 'var(--text-secondary)' }}>Loading...</p>
       </div>
     )
   }
@@ -191,7 +191,7 @@ export default function BookingPage({
           <p style={{ color: 'var(--text-secondary)' }}>{eventType.description}</p>
         )}
         <p style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem', marginTop: '0.5rem' }}>
-          {eventType.durationMin} dakika
+          {eventType.durationMin} minutes
         </p>
       </div>
 
@@ -203,7 +203,7 @@ export default function BookingPage({
             fontSize: '0.875rem',
             color: 'var(--text-secondary)'
           }}>
-            Tarih
+            <span>Date</span>
           </label>
           <input
             type="date"
@@ -232,11 +232,11 @@ export default function BookingPage({
               fontSize: '0.875rem',
               color: 'var(--text-secondary)'
             }}>
-              Saat
+              <span>Time</span>
             </label>
             {slots.length === 0 ? (
               <p style={{ color: 'var(--text-tertiary)', padding: '1rem 0' }}>
-                Bu tarihte müsait saat bulunmuyor.
+                No available hours on this date.
               </p>
             ) : (
               <div style={{
@@ -285,7 +285,7 @@ export default function BookingPage({
               marginBottom: '1.5rem'
             }}>
               <h3 style={{ fontSize: '0.875rem', marginBottom: '1rem', color: 'var(--text-secondary)' }}>
-                Kişisel Bilgiler
+                Personal information
               </h3>
 
               <div style={{ marginBottom: '1rem' }}>
@@ -358,7 +358,7 @@ export default function BookingPage({
                 cursor: submitting ? 'not-allowed' : 'pointer'
               }}
             >
-              {submitting ? 'Gönderiliyor...' : 'Randevu Oluştur'}
+              {submitting ? 'Submitting...' : 'Book'}
             </button>
 
             {error && (
