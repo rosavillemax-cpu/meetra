@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { EventTypeSchema } from '@/lib/schemas'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,11 +27,16 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const body = await request.json()
-  const { userId, slug, title, description, durationMin, bufferBefore, bufferAfter, color } = body
 
-  if (!userId || !slug || !title) {
-    return NextResponse.json({ error: 'userId, slug ve title zorunlu' }, { status: 400 })
+  const validation = EventTypeSchema.safeParse(body)
+  if (!validation.success) {
+    return NextResponse.json(
+      { error: 'Validation failed', details: validation.error.issues },
+      { status: 400 }
+    )
   }
+
+  const { userId, slug, title, description, durationMin, bufferBefore, bufferAfter, color } = validation.data
 
   const existingSlug = await prisma.eventType.findFirst({
     where: { userId, slug }

@@ -1,58 +1,28 @@
-import { redirect } from 'next/navigation'
-import { auth } from '@/lib/auth'
-import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar'
-import { prisma } from '@/lib/prisma'
+'use client'
 
-export default async function DashboardLayout({
+import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar'
+import { ToastProvider } from '@/components/ui/Toast'
+
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const session = await auth()
-
-  if (!session?.user) {
-    redirect('/auth/signin')
-  }
-
-  let user = null
-  if (session.user.id) {
-    user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        image: true,
-        handle: true,
-      }
-    })
-  }
-
   return (
-    <div className="dashboard-layout">
-      <DashboardSidebar user={user} />
-      <main className="dashboard-main">
-        {children}
-      </main>
-
-      <style>{`
-        .dashboard-layout {
-          display: flex;
-          min-height: 100vh;
-        }
-        .dashboard-main {
-          flex: 1;
-          overflow-x: hidden;
-        }
-        @media (max-width: 768px) {
-          .dashboard-layout {
-            flex-direction: column;
-          }
-          .dashboard-main {
-            padding-bottom: 4rem;
-          }
-        }
-      `}</style>
-    </div>
+    <ToastProvider>
+      <div style={{
+        display: 'flex',
+        minHeight: '100vh',
+        background: 'var(--background)'
+      }}>
+        <DashboardSidebar user={null} />
+        <main style={{
+          flex: 1,
+          overflow: 'auto'
+        }}>
+          {children}
+        </main>
+      </div>
+    </ToastProvider>
   )
 }

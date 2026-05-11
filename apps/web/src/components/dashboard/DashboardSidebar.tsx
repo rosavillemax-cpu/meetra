@@ -1,22 +1,22 @@
 'use client'
 
+import React, { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
-import { LayoutDashboard, CalendarDays, Clock4, CalendarClock, Settings, X, Menu, type LucideIcon } from 'lucide-react'
-import { useState, useEffect, useCallback } from 'react'
-import type { User } from 'next-auth'
+import { LayoutDashboard, CalendarDays, Clock4, CalendarClock, Settings, Users, X, Menu, type LucideIcon } from 'lucide-react'
 
 const navItems: { href: string; label: string; Icon: LucideIcon }[] = [
   { href: '/dashboard',              label: 'Overview',        Icon: LayoutDashboard },
   { href: '/dashboard/bookings',     label: 'Bookings',        Icon: CalendarDays },
   { href: '/dashboard/event-types',  label: 'Event Types',    Icon: Clock4 },
   { href: '/dashboard/availability', label: 'Availability',   Icon: CalendarClock },
-  { href: '/dashboard/settings',     label: 'Settings',      Icon: Settings },
+  { href: '/dashboard/teams',        label: 'Teams',           Icon: Users },
+  { href: '/dashboard/settings',      label: 'Settings',       Icon: Settings },
 ]
 
 interface DashboardSidebarProps {
-  user: User | null
+  user: { name?: string | null; email?: string | null; image?: string | null } | null
 }
 
 export function DashboardSidebar({ user }: DashboardSidebarProps) {

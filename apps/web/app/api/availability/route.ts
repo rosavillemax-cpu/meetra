@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { AvailabilitySchema } from '@/lib/schemas'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,15 +22,16 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const body = await request.json()
-  const { userId, weekday, startTime, endTime, isOverride, overrideDate } = body
 
-  if (!userId || weekday === undefined || !startTime || !endTime) {
-    return NextResponse.json({ error: 'userId, weekday, startTime and endTime are required' }, { status: 400 })
+  const validation = AvailabilitySchema.safeParse(body)
+  if (!validation.success) {
+    return NextResponse.json(
+      { error: 'Validation failed', details: validation.error.issues },
+      { status: 400 }
+    )
   }
 
-  if (weekday < 0 || weekday > 6) {
-    return NextResponse.json({ error: 'weekday must be 0-6 (Sunday=0, Saturday=6)' }, { status: 400 })
-  }
+  const { userId, weekday, startTime, endTime, isOverride, overrideDate } = validation.data
 
   const rule = await prisma.availabilityRule.create({
     data: {

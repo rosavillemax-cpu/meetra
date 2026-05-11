@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { sendBookingConfirmation } from '@/lib/email'
 import { createGoogleCalendarEvent } from '@/lib/google-calendar'
 import { createOutlookCalendarEvent } from '@/lib/outlook-calendar'
+import { BookingSchema } from '@/lib/schemas'
 
 export const dynamic = 'force-dynamic'
 
@@ -107,14 +108,16 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { eventTypeId, guestEmail, guestName, startAt, endAt } = body
 
-    if (!eventTypeId || !guestEmail || !guestName || !startAt || !endAt) {
+    const validation = BookingSchema.safeParse(body)
+    if (!validation.success) {
       return NextResponse.json(
-        { error: 'eventTypeId, guestEmail, guestName, startAt, endAt are required' },
+        { error: 'Validation failed', details: validation.error.issues },
         { status: 400 }
       )
     }
+
+    const { eventTypeId, guestEmail, guestName, startAt, endAt } = validation.data
 
     const eventType = await prisma.eventType.findUnique({
       where: { id: eventTypeId },
