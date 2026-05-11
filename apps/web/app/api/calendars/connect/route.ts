@@ -4,6 +4,8 @@ import { prisma } from '@/lib/prisma'
 import { disconnectGoogleCalendar } from '@/lib/google-calendar'
 import { disconnectOutlookCalendar } from '@/lib/outlook-calendar'
 
+export const dynamic = 'force-dynamic'
+
 export async function DELETE(request: Request) {
   const session = await auth()
 

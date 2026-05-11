@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { getOutlookOAuthUrl } from '@/lib/outlook-calendar'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   const session = await auth()
 

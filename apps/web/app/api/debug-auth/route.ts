@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 
+export const dynamic = 'force-dynamic'
+
 // Temporary debug endpoint — remove after fixing auth
 export async function GET() {
   const googleSecret = process.env.AUTH_GOOGLE_SECRET ?? ''
