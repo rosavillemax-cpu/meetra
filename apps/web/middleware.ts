@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { Redis } from '@upstash/redis'
 
 interface RateLimitConfig {
   windowMs: number
@@ -11,17 +12,10 @@ const RATE_LIMIT_CONFIGS: Record<string, RateLimitConfig> = {
   booking: { windowMs: 60000, maxRequests: 30 },
 }
 
-interface RateLimitEntry {
-  count: number
-  resetAt: number
-}
-
-const rateLimitStore = new Map<string, RateLimitEntry>()
-
 function getClientIdentifier(request: NextRequest): string {
   const forwarded = request.headers.get('x-forwarded-for')
   const ip = forwarded ? forwarded.split(',')[0].trim() : 'unknown'
-  return ip
+  return `ip:${ip}`
 }
 
 function getRateLimitConfig(pathname: string): RateLimitConfig {
@@ -34,26 +28,50 @@ function getRateLimitConfig(pathname: string): RateLimitConfig {
   return RATE_LIMIT_CONFIGS.default
 }
 
-function isRateLimited(identifier: string, config: RateLimitConfig): { limited: boolean; remaining: number; resetIn: number } {
-  const now = Date.now()
-  const entry = rateLimitStore.get(identifier)
+const redis = process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+  ? new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    })
+  : null
 
-  if (!entry || now > entry.resetAt) {
-    const resetAt = now + config.windowMs
-    rateLimitStore.set(identifier, { count: 1, resetAt })
-    return { limited: false, remaining: config.maxRequests - 1, resetIn: config.windowMs }
+async function rateLimit(
+  identifier: string,
+  config: RateLimitConfig
+): Promise<{ limited: boolean; remaining: number; reset: number }> {
+  if (!redis) {
+    return { limited: false, remaining: config.maxRequests, reset: Date.now() + config.windowMs }
   }
 
-  if (entry.count >= config.maxRequests) {
-    const resetIn = entry.resetAt - now
-    return { limited: true, remaining: 0, resetIn }
-  }
+  try {
+    const windowSeconds = Math.ceil(config.windowMs / 1000)
+    const key = `ratelimit:${identifier}:${Math.floor(Date.now() / config.windowMs)}`
 
-  entry.count++
-  return { limited: false, remaining: config.maxRequests - entry.count, resetIn: entry.resetAt - now }
+    const current = await redis.incr(key)
+
+    if (current === 1) {
+      await redis.expire(key, windowSeconds)
+    }
+
+    const ttl = await redis.ttl(key)
+    const reset = Date.now() + (ttl > 0 ? ttl * 1000 : config.windowMs)
+
+    if (current > config.maxRequests) {
+      return { limited: true, remaining: 0, reset }
+    }
+
+    return {
+      limited: false,
+      remaining: Math.max(0, config.maxRequests - current),
+      reset,
+    }
+  } catch (error) {
+    console.error('Rate limit error:', error)
+    return { limited: false, remaining: config.maxRequests, reset: Date.now() + config.windowMs }
+  }
 }
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
   if (!pathname.startsWith('/api')) {
@@ -62,17 +80,17 @@ export function middleware(request: NextRequest) {
 
   const identifier = getClientIdentifier(request)
   const config = getRateLimitConfig(pathname)
-  const { limited, remaining, resetIn } = isRateLimited(identifier, config)
+  const { limited, remaining, reset } = await rateLimit(identifier, config)
 
   const response = limited
     ? new NextResponse(
-        JSON.stringify({ error: 'Too many requests', retryAfter: Math.ceil(resetIn / 1000) }),
+        JSON.stringify({ error: 'Too many requests', retryAfter: Math.ceil((reset - Date.now()) / 1000) }),
         { status: 429 }
       )
     : NextResponse.next()
 
   response.headers.set('X-RateLimit-Remaining', remaining.toString())
-  response.headers.set('X-RateLimit-Reset', resetIn.toString())
+  response.headers.set('X-RateLimit-Reset', reset.toString())
   response.headers.set('Cache-Control', 'no-store')
 
   return response
