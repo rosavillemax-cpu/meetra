@@ -2,7 +2,15 @@ import NextAuth from 'next-auth'
 import Google from 'next-auth/providers/google'
 import { prisma } from '@/lib/prisma'
 
-const trimEnv = (key: string) => process.env[key]?.trim() ?? undefined
+const trimEnv = (key: string) => {
+  const val = process.env[key]
+  if (!val || val.trim() === '') return undefined
+  return val.trim()
+}
+
+if (!trimEnv('AUTH_SECRET')) {
+  console.warn('AUTH_SECRET is not set - authentication may not work properly')
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: trimEnv('AUTH_SECRET'),
