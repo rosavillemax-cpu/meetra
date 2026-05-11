@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { BookingMockup } from '@/components/BookingMockup'
 import { ProductSection } from '@/components/landing/ProductSection'
+import { PricingSection } from '@/components/landing/PricingSection'
 
 export default function Home() {
   return (
@@ -210,6 +211,9 @@ export default function Home() {
 
         {/* Product Section */}
         <ProductSection />
+
+        {/* Pricing Section */}
+        <PricingSection />
 
         {/* Footer */}
         <footer className="landing-footer">
