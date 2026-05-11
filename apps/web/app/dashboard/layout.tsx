@@ -3,6 +3,8 @@
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar'
 import { ToastProvider } from '@/components/ui/Toast'
 
+const SIDEBAR_WIDTH = 280
+
 export default function DashboardLayout({
   children,
 }: {
@@ -18,7 +20,11 @@ export default function DashboardLayout({
         <DashboardSidebar user={null} />
         <main style={{
           flex: 1,
-          overflow: 'auto'
+          overflow: 'auto',
+          marginLeft: `${SIDEBAR_WIDTH}px`,
+          minWidth: 0,
+          display: 'flex',
+          flexDirection: 'column'
         }}>
           {children}
         </main>
