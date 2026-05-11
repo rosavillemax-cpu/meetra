@@ -8,16 +8,19 @@ const trimEnv = (key: string) => {
   return val.trim()
 }
 
-if (!trimEnv('AUTH_SECRET')) {
-  console.warn('AUTH_SECRET is not set - authentication may not work properly')
+const googleId = trimEnv('AUTH_GOOGLE_ID')
+const googleSecret = trimEnv('AUTH_GOOGLE_SECRET')
+
+if (!googleId || !googleSecret) {
+  console.error('AUTH_GOOGLE_ID and AUTH_GOOGLE_SECRET are required for authentication to work')
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: trimEnv('AUTH_SECRET'),
   providers: [
     Google({
-      clientId: trimEnv('AUTH_GOOGLE_ID')!,
-      clientSecret: trimEnv('AUTH_GOOGLE_SECRET')!,
+      clientId: googleId || 'placeholder',
+      clientSecret: googleSecret || 'placeholder',
     }),
   ],
   pages: {
