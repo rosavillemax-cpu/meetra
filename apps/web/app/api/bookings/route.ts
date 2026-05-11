@@ -24,12 +24,12 @@ async function syncBookingToCalendars(bookingId: string, hostId: string) {
 
   for (const integration of integrations) {
     try {
-      let eventId: string | null = null
+      let eventId: string | null | undefined = null
 
       if (integration.provider === 'google') {
         eventId = await createGoogleCalendarEvent({
           userId: hostId,
-          title: booking.eventType.title,
+          title: booking.eventType.title || 'Meeting',
           description: `Booking with ${booking.guestName}`,
           startTime: new Date(booking.startAt),
           endTime: new Date(booking.endAt),
@@ -42,7 +42,7 @@ async function syncBookingToCalendars(bookingId: string, hostId: string) {
       if (integration.provider === 'outlook') {
         eventId = await createOutlookCalendarEvent({
           userId: hostId,
-          title: booking.eventType.title,
+          title: booking.eventType.title || 'Meeting',
           description: `Booking with ${booking.guestName}`,
           startTime: new Date(booking.startAt),
           endTime: new Date(booking.endAt),
