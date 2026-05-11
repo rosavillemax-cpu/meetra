@@ -196,7 +196,7 @@ export function CalendarView({ bookings, onSelectBooking }: CalendarViewProps) {
       <style jsx>{`
         .cal-layout {
           display: grid;
-          grid-template-columns: 340px 1fr;
+          grid-template-columns: 320px 1fr;
           background: var(--surface);
           border: 1px solid var(--border);
           border-radius: var(--radius-lg);
@@ -207,12 +207,13 @@ export function CalendarView({ bookings, onSelectBooking }: CalendarViewProps) {
           border-right: 1px solid var(--border);
           display: flex;
           flex-direction: column;
+          background: var(--surface);
         }
         .cal-header {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 1.125rem 1rem;
+          padding: 1rem 0.875rem;
           border-bottom: 1px solid var(--border);
         }
         .cal-nav {
@@ -237,19 +238,21 @@ export function CalendarView({ bookings, onSelectBooking }: CalendarViewProps) {
           color: var(--text-primary);
         }
         .month-label {
-          font-size: 0.9375rem;
+          font-size: 0.875rem;
           font-weight: 600;
           color: var(--text-primary);
+          letter-spacing: -0.01em;
         }
         .today-btn {
-          padding: 0.25rem 0.625rem;
+          padding: 0.25rem 0.5rem;
           border-radius: var(--radius-sm);
           border: 1px solid var(--border);
           background: transparent;
-          font-size: 0.75rem;
+          font-size: 0.6875rem;
           color: var(--text-secondary);
           cursor: pointer;
           transition: all 0.15s;
+          font-weight: 500;
         }
         .today-btn:hover {
           background: var(--primary-bg);
@@ -259,19 +262,18 @@ export function CalendarView({ bookings, onSelectBooking }: CalendarViewProps) {
         .cal-grid {
           display: grid;
           grid-template-columns: repeat(7, 1fr);
-          padding: 0.875rem;
-          gap: 0.125rem;
+          padding: 0.625rem;
+          gap: 2px;
           flex: 1;
         }
         .day-header {
           text-align: center;
-          font-size: 0.625rem;
+          font-size: 0.6875rem;
           font-weight: 600;
           color: var(--text-tertiary);
           text-transform: uppercase;
-          letter-spacing: 0.04em;
-          padding: 0.375rem 0;
-          margin-bottom: 0.125rem;
+          letter-spacing: 0.03em;
+          padding: 0.25rem 0;
         }
         .day-cell {
           aspect-ratio: 1;
@@ -295,7 +297,7 @@ export function CalendarView({ bookings, onSelectBooking }: CalendarViewProps) {
           background: var(--primary-bg);
           border-color: var(--primary);
         }
-        .day-cell.selected .day-num { color: var(--primary); }
+        .day-cell.selected .day-num { color: var(--primary); font-weight: 600; }
         .day-num {
           font-size: 0.75rem;
           font-weight: 500;
@@ -307,6 +309,7 @@ export function CalendarView({ bookings, onSelectBooking }: CalendarViewProps) {
           gap: 2px;
           align-items: center;
           justify-content: center;
+          flex-wrap: nowrap;
         }
         .booking-dot {
           width: 4px;
@@ -315,48 +318,52 @@ export function CalendarView({ bookings, onSelectBooking }: CalendarViewProps) {
           flex-shrink: 0;
         }
         .dot-more {
-          font-size: 0.5rem;
+          font-size: 0.5625rem;
           color: var(--text-tertiary);
           font-weight: 500;
+          margin-left: 1px;
         }
 
         .cal-detail {
           display: flex;
           flex-direction: column;
           background: var(--surface2);
+          min-width: 0;
         }
         .detail-header {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 1.25rem 1.5rem;
+          padding: 1rem 1.25rem;
           border-bottom: 1px solid var(--border);
           background: var(--surface);
+          flex-shrink: 0;
         }
         .detail-date {
-          font-size: 1.0625rem;
+          font-size: 1rem;
           font-weight: 600;
           color: var(--text-primary);
           margin: 0;
+          letter-spacing: -0.01em;
         }
         .detail-count {
-          font-size: 0.8125rem;
-          color: var(--text-tertiary);
-          background: var(--surface-hover);
+          font-size: 0.75rem;
+          color: var(--text-secondary);
+          background: var(--primary-bg);
           padding: 0.25rem 0.625rem;
           border-radius: var(--radius);
+          font-weight: 500;
         }
         .detail-bookings {
           flex: 1;
-          padding: 1rem 1.5rem;
+          padding: 0.875rem 1.25rem;
           display: flex;
           flex-direction: column;
-          gap: 0.75rem;
+          gap: 0.625rem;
           overflow-y: auto;
         }
         .detail-booking-card {
           display: flex;
-          gap: 0;
           background: var(--surface);
           border: 1px solid var(--border);
           border-radius: var(--radius);
@@ -366,50 +373,57 @@ export function CalendarView({ bookings, onSelectBooking }: CalendarViewProps) {
         }
         .detail-booking-card:hover {
           border-color: var(--border-hover);
-          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+          box-shadow: 0 2px 6px rgba(0,0,0,0.04);
           transform: translateY(-1px);
         }
         .dbc-color {
-          width: 4px;
+          width: 3px;
           flex-shrink: 0;
         }
         .dbc-content {
           flex: 1;
-          padding: 0.875rem 1rem;
+          padding: 0.75rem 0.875rem;
           display: flex;
           flex-direction: column;
-          gap: 0.5rem;
+          gap: 0.375rem;
+          min-width: 0;
         }
         .dbc-top {
           display: flex;
           align-items: flex-start;
           justify-content: space-between;
-          gap: 0.75rem;
+          gap: 0.5rem;
         }
         .dbc-title {
-          font-size: 0.9375rem;
+          font-size: 0.875rem;
           font-weight: 600;
           color: var(--text-primary);
           margin: 0;
+          line-height: 1.3;
         }
         .dbc-time {
           display: flex;
           align-items: center;
-          gap: 0.3rem;
-          font-size: 0.75rem;
+          gap: 0.25rem;
+          font-size: 0.6875rem;
           color: var(--text-secondary);
           white-space: nowrap;
           font-variant-numeric: tabular-nums;
+          flex-shrink: 0;
+          padding-top: 0.125rem;
         }
         .dbc-guest {
           display: flex;
           align-items: center;
-          gap: 0.375rem;
-          font-size: 0.8125rem;
+          gap: 0.25rem;
+          font-size: 0.75rem;
           color: var(--text-secondary);
         }
         .dbc-email {
           color: var(--text-tertiary);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
         .detail-empty, .detail-welcome {
           flex: 1;
@@ -421,24 +435,24 @@ export function CalendarView({ bookings, onSelectBooking }: CalendarViewProps) {
           text-align: center;
         }
         .empty-icon, .welcome-icon {
-          width: 64px;
-          height: 64px;
+          width: 56px;
+          height: 56px;
           border-radius: 50%;
           background: var(--surface-hover);
           display: flex;
           align-items: center;
           justify-content: center;
           color: var(--text-tertiary);
-          margin-bottom: 1rem;
+          margin-bottom: 0.875rem;
         }
         .empty-title, .welcome-title {
-          font-size: 1rem;
+          font-size: 0.9375rem;
           font-weight: 600;
           color: var(--text-primary);
           margin: 0 0 0.25rem;
         }
         .empty-sub, .welcome-sub {
-          font-size: 0.875rem;
+          font-size: 0.8125rem;
           color: var(--text-tertiary);
           margin: 0;
         }
@@ -447,13 +461,14 @@ export function CalendarView({ bookings, onSelectBooking }: CalendarViewProps) {
           .cal-layout {
             grid-template-columns: 1fr;
             grid-template-rows: auto 1fr;
+            min-height: auto;
           }
           .cal-sidebar {
             border-right: none;
             border-bottom: 1px solid var(--border);
           }
           .cal-grid {
-            gap: 0.25rem;
+            gap: 0.125rem;
           }
         }
       `}</style>

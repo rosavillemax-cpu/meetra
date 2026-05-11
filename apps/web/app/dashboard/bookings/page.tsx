@@ -75,7 +75,7 @@ export default function BookingsPage() {
       </header>
 
       <div className="filter-bar">
-        <Filter size={16} />
+        <span className="filter-icon"><Filter size={16} /></span>
         {(['upcoming', 'past', 'cancelled', 'all'] as FilterType[]).map(f => (
           <button
             key={f}
@@ -111,7 +111,7 @@ export default function BookingsPage() {
       <style jsx>{`
         .bookings-page {
           padding: 2rem;
-          max-width: 800px;
+          max-width: 1200px;
         }
         .page-header {
           display: flex;
@@ -165,7 +165,12 @@ export default function BookingsPage() {
           margin-bottom: 1.5rem;
           padding-bottom: 1rem;
           border-bottom: 1px solid var(--border);
+        }
+        .filter-icon {
           color: var(--text-tertiary);
+          display: flex;
+          align-items: center;
+          margin-right: 0.25rem;
         }
         .filter-btn {
           padding: 0.375rem 0.75rem;
@@ -176,6 +181,7 @@ export default function BookingsPage() {
           font-size: 0.8125rem;
           cursor: pointer;
           transition: all 0.15s;
+          font-weight: 500;
         }
         .filter-btn:hover {
           background: var(--surface-hover);
