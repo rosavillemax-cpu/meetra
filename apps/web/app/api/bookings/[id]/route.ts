@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
+import { sendBookingCancellation } from '@/lib/email'
 
 export async function GET(
   request: Request,
@@ -17,7 +18,7 @@ export async function GET(
   })
 
   if (!booking) {
-    return NextResponse.json({ error: 'Rezervasyon bulunamadı' }, { status: 404 })
+    return NextResponse.json({ error: 'Booking not found' }, { status: 404 })
   }
 
   return NextResponse.json(booking)
@@ -31,15 +32,18 @@ export async function DELETE(
   const { searchParams } = new URL(request.url)
   const token = searchParams.get('token')
 
-  const booking = await prisma.booking.findUnique({ where: { id } })
+  const booking = await prisma.booking.findUnique({
+    where: { id },
+    include: { eventType: { include: { user: true } } }
+  })
 
   if (!booking) {
-    return NextResponse.json({ error: 'Rezervasyon bulunamadı' }, { status: 404 })
+    return NextResponse.json({ error: 'Booking not found' }, { status: 404 })
   }
 
   if (token) {
     if (booking.cancelToken !== token) {
-      return NextResponse.json({ error: 'Geçersiz iptal token' }, { status: 403 })
+      return NextResponse.json({ error: 'Invalid cancel token' }, { status: 403 })
     }
   }
 
@@ -47,12 +51,21 @@ export async function DELETE(
   const isHost = session?.user?.id === booking.hostId
 
   if (!isHost && booking.cancelToken !== token) {
-    return NextResponse.json({ error: 'Yetkilendirme hatası' }, { status: 403 })
+    return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
   }
 
   const updated = await prisma.booking.update({
     where: { id },
     data: { status: 'cancelled' }
+  })
+
+  await sendBookingCancellation({
+    guestName: booking.guestName,
+    guestEmail: booking.guestEmail,
+    eventTypeTitle: booking.eventType.title,
+    startTime: booking.startAt.toISOString(),
+    hostName: booking.eventType.user.name || booking.eventType.user.handle,
+    hostEmail: booking.eventType.user.email,
   })
 
   return NextResponse.json(updated)
