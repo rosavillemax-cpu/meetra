@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { sendBookingReminder } from '@/lib/email'
 
+export const dynamic = 'force-dynamic'
+
 const CRON_SECRET = process.env.CRON_SECRET || 'dev-secret-change-in-production'
 
 export async function POST(request: Request) {
