@@ -52,40 +52,41 @@ export default function BookingsPage() {
   return (
     <div className="bookings-page">
       <header className="page-header">
-        <div>
+        <div className="header-left">
           <h1>Bookings</h1>
           <p className="page-subtitle">View all your bookings</p>
         </div>
-        <div className="view-toggle">
-          <button
-            className={`view-btn ${view === 'list' ? 'active' : ''}`}
-            onClick={() => setView('list')}
-            title="List view"
-          >
-            <LayoutList size={16} />
-          </button>
-          <button
-            className={`view-btn ${view === 'calendar' ? 'active' : ''}`}
-            onClick={() => setView('calendar')}
-            title="Calendar view"
-          >
-            <Calendar size={16} />
-          </button>
+        <div className="header-right">
+          <div className="filter-bar">
+            <span className="filter-icon"><Filter size={16} /></span>
+            {(['upcoming', 'past', 'cancelled', 'all'] as FilterType[]).map(f => (
+              <button
+                key={f}
+                className={`filter-btn ${filter === f ? 'active' : ''}`}
+                onClick={() => setFilter(f)}
+              >
+                {f === 'upcoming' ? 'Upcoming' : f === 'past' ? 'Past' : f === 'cancelled' ? 'Cancelled' : 'All'}
+              </button>
+            ))}
+          </div>
+          <div className="view-toggle">
+            <button
+              className={`view-btn ${view === 'list' ? 'active' : ''}`}
+              onClick={() => setView('list')}
+              title="List view"
+            >
+              <LayoutList size={16} />
+            </button>
+            <button
+              className={`view-btn ${view === 'calendar' ? 'active' : ''}`}
+              onClick={() => setView('calendar')}
+              title="Calendar view"
+            >
+              <Calendar size={16} />
+            </button>
+          </div>
         </div>
       </header>
-
-      <div className="filter-bar">
-        <span className="filter-icon"><Filter size={16} /></span>
-        {(['upcoming', 'past', 'cancelled', 'all'] as FilterType[]).map(f => (
-          <button
-            key={f}
-            className={`filter-btn ${filter === f ? 'active' : ''}`}
-            onClick={() => setFilter(f)}
-          >
-            {f === 'upcoming' ? 'Upcoming' : f === 'past' ? 'Past' : f === 'cancelled' ? 'Cancelled' : 'All'}
-          </button>
-        ))}
-      </div>
 
       {loading ? (
         <div className="loading">Loading...</div>
@@ -117,7 +118,11 @@ export default function BookingsPage() {
           display: flex;
           align-items: flex-start;
           justify-content: space-between;
+          gap: 1.5rem;
           margin-bottom: 1.5rem;
+        }
+        .header-left {
+          flex-shrink: 0;
         }
         .page-header h1 {
           font-size: 1.5rem;
@@ -129,6 +134,11 @@ export default function BookingsPage() {
           margin: 0;
           font-size: 0.875rem;
         }
+        .header-right {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
         .view-toggle {
           display: flex;
           gap: 0.25rem;
@@ -136,6 +146,7 @@ export default function BookingsPage() {
           padding: 0.25rem;
           border-radius: var(--radius);
           border: 1px solid var(--border);
+          flex-shrink: 0;
         }
         .view-btn {
           display: flex;
@@ -161,35 +172,37 @@ export default function BookingsPage() {
         .filter-bar {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          margin-bottom: 1.5rem;
-          padding-bottom: 1rem;
-          border-bottom: 1px solid var(--border);
+          gap: 0.375rem;
+          padding: 0.25rem;
+          background: var(--surface-hover);
+          border-radius: var(--radius);
+          border: 1px solid var(--border);
         }
         .filter-icon {
           color: var(--text-tertiary);
           display: flex;
           align-items: center;
-          margin-right: 0.25rem;
+          padding: 0 0.25rem;
         }
         .filter-btn {
-          padding: 0.375rem 0.75rem;
-          border-radius: var(--radius);
-          border: 1px solid var(--border);
+          padding: 0.375rem 0.625rem;
+          border-radius: var(--radius-sm);
+          border: none;
           background: transparent;
           color: var(--text-secondary);
           font-size: 0.8125rem;
           cursor: pointer;
           transition: all 0.15s;
           font-weight: 500;
+          white-space: nowrap;
         }
         .filter-btn:hover {
-          background: var(--surface-hover);
+          color: var(--text-primary);
         }
         .filter-btn.active {
-          background: var(--primary-bg);
-          border-color: var(--primary);
+          background: var(--surface);
           color: var(--primary);
+          box-shadow: 0 1px 2px rgba(0,0,0,0.06);
         }
         .loading {
           text-align: center;
@@ -208,6 +221,28 @@ export default function BookingsPage() {
           display: flex;
           flex-direction: column;
           gap: 1rem;
+        }
+        @media (max-width: 900px) {
+          .page-header {
+            flex-direction: column;
+          }
+          .header-right {
+            width: 100%;
+            justify-content: space-between;
+          }
+        }
+        @media (max-width: 640px) {
+          .bookings-page {
+            padding: 1rem;
+          }
+          .filter-bar {
+            flex-wrap: wrap;
+            gap: 0.25rem;
+          }
+          .filter-btn {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+          }
         }
       `}</style>
     </div>
