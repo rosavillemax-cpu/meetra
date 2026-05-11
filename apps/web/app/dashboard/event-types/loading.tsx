@@ -13,15 +13,15 @@ export default function EventTypesLoading() {
             height: '28px',
             width: '150px',
             background: 'var(--surface2)',
-            borderRadius: 'var(--radius-sm)',
-            marginBottom: '0.5rem',
+            borderRadius: '4px',
+            marginBottom: '8px',
             animation: 'pulse 1.5s infinite'
           }} />
           <div style={{
             height: '16px',
             width: '220px',
             background: 'var(--surface2)',
-            borderRadius: 'var(--radius-sm)',
+            borderRadius: '4px',
             animation: 'pulse 1.5s infinite'
           }} />
         </div>
@@ -29,7 +29,7 @@ export default function EventTypesLoading() {
           height: '40px',
           width: '140px',
           background: 'var(--surface2)',
-          borderRadius: 'var(--radius)',
+          borderRadius: '8px',
           animation: 'pulse 1.5s infinite'
         }} />
       </div>
@@ -42,7 +42,7 @@ export default function EventTypesLoading() {
           <EventTypeSkeleton key={i} />
         ))}
       </div>
-      <style jsx>{`
+      <style>{`
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }

@@ -1,3 +1,5 @@
+'use client'
+
 export function BookingSkeleton() {
   return (
     <div className="booking-skeleton">
@@ -242,7 +244,6 @@ export function CalendarSkeleton() {
           background: var(--surface2);
           border-radius: var(--radius-sm);
           animation: pulse 1.5s infinite;
-          animation-delay: ${(Math.random() * 0.5).toFixed(2)}s;
         }
         .skeleton-detail {
           padding: 1.25rem 1.5rem;
