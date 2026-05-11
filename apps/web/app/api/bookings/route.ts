@@ -1,8 +1,68 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { sendBookingConfirmation } from '@/lib/email'
+import { createGoogleCalendarEvent } from '@/lib/google-calendar'
+import { createOutlookCalendarEvent } from '@/lib/outlook-calendar'
 
 export const dynamic = 'force-dynamic'
+
+async function syncBookingToCalendars(bookingId: string, hostId: string) {
+  const integrations = await prisma.calendarIntegration.findMany({
+    where: { userId: hostId, isActive: true }
+  })
+
+  if (integrations.length === 0) return
+
+  const booking = await prisma.booking.findUnique({
+    where: { id: bookingId },
+    include: { eventType: true }
+  })
+
+  if (!booking) return
+
+  const updateData: Record<string, string> = {}
+
+  for (const integration of integrations) {
+    try {
+      let eventId: string | null = null
+
+      if (integration.provider === 'google') {
+        eventId = await createGoogleCalendarEvent({
+          userId: hostId,
+          title: booking.eventType.title,
+          description: `Booking with ${booking.guestName}`,
+          startTime: new Date(booking.startAt),
+          endTime: new Date(booking.endAt),
+          guestEmail: booking.guestEmail,
+          guestName: booking.guestName
+        })
+        if (eventId) updateData.googleEventId = eventId
+      }
+
+      if (integration.provider === 'outlook') {
+        eventId = await createOutlookCalendarEvent({
+          userId: hostId,
+          title: booking.eventType.title,
+          description: `Booking with ${booking.guestName}`,
+          startTime: new Date(booking.startAt),
+          endTime: new Date(booking.endAt),
+          guestEmail: booking.guestEmail,
+          guestName: booking.guestName
+        })
+        if (eventId) updateData.outlookEventId = eventId
+      }
+    } catch (err) {
+      console.error(`Failed to sync to ${integration.provider}:`, err)
+    }
+  }
+
+  if (Object.keys(updateData).length > 0) {
+    await prisma.booking.update({
+      where: { id: bookingId },
+      data: updateData
+    })
+  }
+}
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -100,6 +160,8 @@ export async function POST(request: Request) {
         data: { confirmationSentAt: new Date() }
       })
     }
+
+    syncBookingToCalendars(booking.id, eventType.userId)
 
     return NextResponse.json(booking, { status: 201 })
   } catch (error) {
