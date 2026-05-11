@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { BookingMockup } from '@/components/BookingMockup'
+import { ProductSection } from '@/components/landing/ProductSection'
 
 export default function Home() {
   return (
@@ -206,6 +207,9 @@ export default function Home() {
             </div>
           </section>
         </main>
+
+        {/* Product Section */}
+        <ProductSection />
 
         {/* Footer */}
         <footer className="landing-footer">
