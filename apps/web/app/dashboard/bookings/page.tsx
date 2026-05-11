@@ -1,16 +1,19 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calendar, Filter } from 'lucide-react'
+import { Calendar, Filter, LayoutList } from 'lucide-react'
 import { BookingCard } from '@/components/bookings/BookingCard'
+import { CalendarView } from '@/components/bookings/CalendarView'
 import type { BookingWithRelations } from '@/components/bookings/BookingCard'
 
 type FilterType = 'upcoming' | 'past' | 'cancelled' | 'all'
+type ViewType = 'list' | 'calendar'
 
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<BookingWithRelations[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<FilterType>('upcoming')
+  const [view, setView] = useState<ViewType>('list')
   const [hostId, setHostId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -53,6 +56,22 @@ export default function BookingsPage() {
           <h1>Bookings</h1>
           <p className="page-subtitle">View all your bookings</p>
         </div>
+        <div className="view-toggle">
+          <button
+            className={`view-btn ${view === 'list' ? 'active' : ''}`}
+            onClick={() => setView('list')}
+            title="List view"
+          >
+            <LayoutList size={16} />
+          </button>
+          <button
+            className={`view-btn ${view === 'calendar' ? 'active' : ''}`}
+            onClick={() => setView('calendar')}
+            title="Calendar view"
+          >
+            <Calendar size={16} />
+          </button>
+        </div>
       </header>
 
       <div className="filter-bar">
@@ -75,6 +94,8 @@ export default function BookingsPage() {
           <Calendar size={48} />
           <p>No bookings yet</p>
         </div>
+      ) : view === 'calendar' ? (
+        <CalendarView bookings={bookings} />
       ) : (
         <div className="bookings-list">
           {bookings.map(booking => (
@@ -93,6 +114,9 @@ export default function BookingsPage() {
           max-width: 800px;
         }
         .page-header {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
           margin-bottom: 1.5rem;
         }
         .page-header h1 {
@@ -104,6 +128,35 @@ export default function BookingsPage() {
           color: var(--text-secondary);
           margin: 0;
           font-size: 0.875rem;
+        }
+        .view-toggle {
+          display: flex;
+          gap: 0.25rem;
+          background: var(--surface-hover);
+          padding: 0.25rem;
+          border-radius: var(--radius);
+          border: 1px solid var(--border);
+        }
+        .view-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          border-radius: var(--radius-sm);
+          border: none;
+          background: transparent;
+          color: var(--text-tertiary);
+          cursor: pointer;
+          transition: all 0.15s;
+        }
+        .view-btn:hover {
+          color: var(--text-secondary);
+        }
+        .view-btn.active {
+          background: var(--surface);
+          color: var(--primary);
+          box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
         .filter-bar {
           display: flex;
