@@ -13,7 +13,7 @@ export default function BookingsPage() {
   const [bookings, setBookings] = useState<BookingWithRelations[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<FilterType>('upcoming')
-  const [view, setView] = useState<ViewType>('list')
+  const [view, setView] = useState<ViewType>('calendar')
   const [hostId, setHostId] = useState<string | null>(null)
 
   useEffect(() => {
