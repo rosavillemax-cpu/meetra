@@ -1,8 +1,14 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const getResend = () => {
+  if (!process.env.RESEND_API_KEY) {
+    console.warn('RESEND_API_KEY not configured - email sending disabled')
+    return null
+  }
+  return new Resend(process.env.RESEND_API_KEY)
+}
 
-const FROM_EMAIL = process.env.EMAIL_FROM || 'Meetra <noreply@meetra.com>';
+const FROM_EMAIL = 'Meetra <noreply@meetra.com>'
 
 interface BookingEmailData {
   guestName: string;
@@ -55,6 +61,9 @@ function formatTime(dateStr: string): string {
 
 export async function sendBookingConfirmation(data: BookingEmailData) {
   const { guestName, guestEmail, eventTypeTitle, startTime, endTime, durationMin, hostName, hostEmail, cancelUrl } = data;
+
+  const resend = getResend()
+  if (!resend) return { success: false, error: 'Email not configured' }
 
   try {
     const response = await resend.emails.send({
@@ -122,6 +131,9 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
 export async function sendBookingReminder(data: ReminderEmailData) {
   const { guestName, guestEmail, eventTypeTitle, startTime, endTime, durationMin, hostName } = data;
 
+  const resend = getResend()
+  if (!resend) return { success: false, error: 'Email not configured' }
+
   try {
     const response = await resend.emails.send({
       from: FROM_EMAIL,
@@ -183,6 +195,9 @@ export async function sendBookingReminder(data: ReminderEmailData) {
 export async function sendBookingCancellation(data: CancellationEmailData) {
   const { guestName, guestEmail, eventTypeTitle, startTime, hostName, hostEmail } = data;
 
+  const resend = getResend()
+  if (!resend) return { success: false, error: 'Email not configured' }
+
   try {
     const response = await resend.emails.send({
       from: FROM_EMAIL,
@@ -237,6 +252,9 @@ export async function sendBookingCancellation(data: CancellationEmailData) {
 }
 
 export async function sendTestEmail(to: string) {
+  const resend = getResend()
+  if (!resend) return { success: false, error: 'Email not configured' }
+
   try {
     const response = await resend.emails.send({
       from: FROM_EMAIL,
