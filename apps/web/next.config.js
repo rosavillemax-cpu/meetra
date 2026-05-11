@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
-    // Trim newlines that Vercel sometimes appends to env values
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL?.trim(),
     AUTH_URL: process.env.AUTH_URL?.trim(),
   },
   async redirects() {
