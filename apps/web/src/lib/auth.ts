@@ -16,15 +16,16 @@ if (!googleId || !googleSecret) {
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  secret: trimEnv('AUTH_SECRET'),
+  secret: trimEnv('AUTH_SECRET') || 'fallback-secret-for-development-only-change-in-production',
   providers: [
     Google({
-      clientId: googleId || 'placeholder',
-      clientSecret: googleSecret || 'placeholder',
+      clientId: googleId || '',
+      clientSecret: googleSecret || '',
     }),
   ],
-  pages: {
-    signIn: '/auth/signin',
+  session: {
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60,
   },
   session: {
     strategy: 'jwt',
