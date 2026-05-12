@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import { Providers } from '@/components/providers'
-import { GlobalErrorBoundary } from '@/components/GlobalErrorBoundary'
 import './globals.css'
 
 const geistSans = localFont({
@@ -26,9 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <GlobalErrorBoundary>
-          <Providers>{children}</Providers>
-        </GlobalErrorBoundary>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )
