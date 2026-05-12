@@ -31,21 +31,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (session.user && token.sub) {
         session.user.id = token.sub
       }
-      if (session.user?.id) {
-        const dbUser = await prisma.user.findUnique({
-          where: { id: session.user.id },
-          select: { name: true, image: true },
-        })
-        if (dbUser) {
-          if (session.user) {
-            session.user.name = dbUser.name
-            session.user.image = dbUser.image ?? null
-          }
-        }
-        const isReturning = await prisma.booking.count({ where: { hostId: session.user.id } }) > 0
-        if (session.user) {
-          ;(session.user as any).isReturning = isReturning
-        }
+      if (session.user) {
+        session.user.name = token.name
+        ;(session.user as any).isReturning = token.isReturning ?? false
       }
       return session
     },
@@ -80,6 +68,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (dbUser?.name) {
           token.name = dbUser.name
         }
+        const isReturning = await prisma.booking.count({ where: { hostId: token.sub } }) > 0
+        token.isReturning = isReturning
       }
       return token
     },
