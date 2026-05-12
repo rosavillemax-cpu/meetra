@@ -12,7 +12,7 @@ export async function GET(
   const user = await prisma.user.findUnique({ where: { handle } })
 
   if (!user) {
-    return NextResponse.json({ error: 'Kullanıcı bulunamadı' }, { status: 404 })
+    return NextResponse.json({ error: 'User not found' }, { status: 404 })
   }
 
   const eventTypes = await prisma.eventType.findMany({
@@ -33,13 +33,13 @@ export async function POST(
   const user = await prisma.user.findUnique({ where: { handle } })
 
   if (!user) {
-    return NextResponse.json({ error: 'Kullanıcı bulunamadı' }, { status: 404 })
+    return NextResponse.json({ error: 'User not found' }, { status: 404 })
   }
 
   const { slug, title, description, durationMin, bufferBefore, bufferAfter, color } = body
 
   if (!slug || !title) {
-    return NextResponse.json({ error: 'slug ve title zorunlu' }, { status: 400 })
+    return NextResponse.json({ error: 'slug and title are required' }, { status: 400 })
   }
 
   const eventType = await prisma.eventType.create({

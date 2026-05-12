@@ -30,7 +30,7 @@ export async function GET(
   const dateStr = searchParams.get('date')
 
   if (!dateStr) {
-    return NextResponse.json({ error: 'date parametresi gerekli (YYYY-MM-DD)' }, { status: 400 })
+    return NextResponse.json({ error: 'date parameter is required (YYYY-MM-DD)' }, { status: 400 })
   }
 
   const eventType = await prisma.eventType.findUnique({
@@ -48,7 +48,7 @@ export async function GET(
   })
 
   if (!eventType) {
-    return NextResponse.json({ error: 'Event type bulunamadı' }, { status: 404 })
+    return NextResponse.json({ error: 'Event type not found' }, { status: 404 })
   }
 
   const requestedDate = new Date(dateStr)

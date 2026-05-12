@@ -18,7 +18,7 @@ export async function GET(
   })
 
   if (!eventType) {
-    return NextResponse.json({ error: 'Event type bulunamadı' }, { status: 404 })
+    return NextResponse.json({ error: 'Event type not found' }, { status: 404 })
   }
 
   return NextResponse.json(eventType)
@@ -34,7 +34,7 @@ export async function PATCH(
   const eventType = await prisma.eventType.findUnique({ where: { id } })
 
   if (!eventType) {
-    return NextResponse.json({ error: 'Event type bulunamadı' }, { status: 404 })
+    return NextResponse.json({ error: 'Event type not found' }, { status: 404 })
   }
 
   const { slug, title, description, durationMin, bufferBefore, bufferAfter, color, active } = body
@@ -44,7 +44,7 @@ export async function PATCH(
       where: { userId: eventType.userId, slug, id: { not: id } }
     })
     if (existingSlug) {
-      return NextResponse.json({ error: 'Bu slug zaten kullanılıyor' }, { status: 409 })
+      return NextResponse.json({ error: 'This slug is already in use' }, { status: 409 })
     }
   }
 
@@ -77,7 +77,7 @@ export async function DELETE(
   const eventType = await prisma.eventType.findUnique({ where: { id } })
 
   if (!eventType) {
-    return NextResponse.json({ error: 'Event type bulunamadı' }, { status: 404 })
+    return NextResponse.json({ error: 'Event type not found' }, { status: 404 })
   }
 
   await prisma.eventType.delete({ where: { id } })

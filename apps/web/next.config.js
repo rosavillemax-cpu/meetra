@@ -1,3 +1,5 @@
+const withNextIntl = require('next-intl/plugin').default
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
@@ -6,7 +8,6 @@ const nextConfig = {
   },
   async redirects() {
     return [
-      // Prevent /api being caught by [handle] dynamic route
       {
         source: '/api',
         destination: '/',
@@ -14,6 +15,6 @@ const nextConfig = {
       },
     ]
   },
-};
+}
 
-export default nextConfig;
+module.exports = withNextIntl(nextConfig)

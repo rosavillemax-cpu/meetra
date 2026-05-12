@@ -123,7 +123,7 @@ export default function SettingsPage() {
               type="text"
               value={name}
               onChange={e => setName(e.target.value)}
-              placeholder="Adınız Soyadınız"
+              placeholder="Your name"
             />
           </div>
 

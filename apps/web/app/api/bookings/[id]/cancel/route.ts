@@ -14,11 +14,11 @@ export async function POST(
   const booking = await prisma.booking.findUnique({ where: { id } })
 
   if (!booking) {
-    return NextResponse.json({ error: 'Rezervasyon bulunamadı' }, { status: 404 })
+    return NextResponse.json({ error: 'Booking not found' }, { status: 404 })
   }
 
   if (booking.cancelToken !== cancelToken) {
-    return NextResponse.json({ error: 'Geçersiz iptal token' }, { status: 403 })
+    return NextResponse.json({ error: 'Invalid cancel token' }, { status: 403 })
   }
 
   const updated = await prisma.booking.update({

@@ -40,7 +40,7 @@ function SignInContent() {
         marginBottom: '2rem',
         fontSize: '0.9375rem'
       }}>
-        Devam etmek için giriş yapın → Sign in to continue
+        Sign in to continue
       </p>
 
       {error && (

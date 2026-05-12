@@ -1,0 +1,112 @@
+{
+  "common": {
+    "appName": "Callroom",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "notFound": "Not found",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "signInWithGoogle": "Sign in with Google",
+    "bySigningIn": "By signing in, you agree to the {termsLink} and {privacyLink}.",
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy"
+  },
+  "auth": {
+    "signInToContinue": "Sign in to continue",
+    "signInFailed": "Sign in failed.",
+    "emailLinkedToAnother": "This email is linked to another account."
+  },
+  "dashboard": {
+    "welcome": "Welcome!",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "upcomingBookings": "Upcoming bookings",
+    "noUpcomingBookings": "No upcoming bookings",
+    "noEventTypes": "You don't have any event types yet",
+    "createEventType": "Create event type",
+    "quickAccess": "Quick access",
+    "manageAvailability": "Manage availability",
+    "editProfile": "Edit profile",
+    "allBookings": "All bookings",
+    "viewAll": "View all",
+    "welcomeBack": "Welcome back, {name}!"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your profile and preferences",
+    "fullName": "Full name",
+    "username": "Username (handle)",
+    "timezone": "Timezone",
+    "regionLanguage": "Region & language",
+    "changesSaved": "Changes saved!",
+    "saveChanges": "Save changes"
+  },
+  "eventTypes": {
+    "title": "Event types",
+    "subtitle": "Create and manage your event types",
+    "noEventTypes": "No event types yet",
+    "createFirst": "Create your first event type",
+    "create": "Create event type",
+    "deleteConfirm": "Are you sure you want to delete this event type?",
+    "titleLabel": "Title *",
+    "titlePlaceholder": "15 minute intro call",
+    "description": "Description",
+    "descriptionPlaceholder": "A short description about this event type...",
+    "duration": "Duration *",
+    "minutes": "{count} minutes",
+    "slug": "Slug",
+    "slugHelp": "Your booking page will be at /{handle}/{slug}",
+    "copied": "Copied!",
+    "copyLink": "Copy link"
+  },
+  "availability": {
+    "title": "Availability",
+    "subtitle": "Set your working days and hours",
+    "subtitleHint": "Appointments will be scheduled according to these hours.",
+    "everyDay": "Every day",
+    "setWorkHours": "Set work hours for each day"
+  },
+  "bookings": {
+    "title": "Bookings",
+    "subtitle": "View all your bookings",
+    "noBookings": "No bookings yet",
+    "cancelConfirm": "Are you sure you want to cancel this booking?",
+    "cancel": "Cancel",
+    "confirmed": "Confirmed",
+    "cancelled": "Cancelled"
+  },
+  "bookingPage": {
+    "selectDate": "Select a date",
+    "selectTime": "Select a time",
+    "guestName": "Your name",
+    "guestEmail": "Your email",
+    "bookNow": "Book now",
+    "userNotFound": "User or event not found",
+    "noSlots": "No available slots for this date"
+  },
+  "confirmation": {
+    "title": "Booking Confirmed",
+    "subtitle": "Your booking has been created successfully.",
+    "emailSent": "A confirmation email has been sent to {email}.",
+    "bookingDetails": "You have a {duration} minute meeting with {handle}.",
+    "cancelInfo": "You can cancel your booking using the next page.",
+    "backToHome": "Back to home"
+  },
+  "errors": {
+    "notFound": "This page could not be found.",
+    "somethingWentWrong": "Something went wrong.",
+    "unauthorized": "You must be signed in to view this page.",
+    "rateLimited": "Too many requests. Please try again later.",
+    "serverError": "Internal server error"
+  },
+  "onboarding": {
+    "welcome": "Welcome to Callroom!",
+    "subtitle": "Create your first event type to get started",
+    "getStarted": "Get started"
+  }
+}

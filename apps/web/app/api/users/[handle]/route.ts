@@ -30,7 +30,7 @@ export async function GET(
   })
 
   if (!user) {
-    return NextResponse.json({ error: 'Kullanıcı bulunamadı' }, { status: 404 })
+    return NextResponse.json({ error: 'User not found' }, { status: 404 })
   }
 
   return NextResponse.json(user)
@@ -46,7 +46,7 @@ export async function PATCH(
   const user = await prisma.user.findUnique({ where: { handle } })
 
   if (!user) {
-    return NextResponse.json({ error: 'Kullanıcı bulunamadı' }, { status: 404 })
+    return NextResponse.json({ error: 'User not found' }, { status: 404 })
   }
 
   const { name, timezone, handle: newHandle } = body
@@ -54,7 +54,7 @@ export async function PATCH(
   if (newHandle && newHandle !== handle) {
     const existingHandle = await prisma.user.findUnique({ where: { handle: newHandle } })
     if (existingHandle) {
-      return NextResponse.json({ error: 'Bu handle zaten kullanılıyor' }, { status: 409 })
+      return NextResponse.json({ error: 'This handle is already in use' }, { status: 409 })
     }
   }
 

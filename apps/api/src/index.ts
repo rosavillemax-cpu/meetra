@@ -11,7 +11,7 @@ app.get('/health', async () => {
   return { status: 'ok', app: 'callroom' }
 })
 
-// Kullanıcı oluştur
+// Create user
 app.post('/users', async (req, reply) => {
   const { email, handle, timezone } = req.body as any
   const user = await prisma.user.create({
@@ -20,11 +20,11 @@ app.post('/users', async (req, reply) => {
   return user
 })
 
-// Kullanıcı getir
+// Get user
 app.get('/users/:handle', async (req, reply) => {
   const { handle } = req.params as any
   const user = await prisma.user.findUnique({ where: { handle } })
-  if (!user) return reply.status(404).send({ error: 'Kullanıcı bulunamadı' })
+  if (!user) return reply.status(404).send({ error: 'User not found' })
   return user
 })
 

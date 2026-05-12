@@ -71,7 +71,7 @@ setError('User or event not found')
       const dateStr = today.toISOString().split('T')[0] ?? ''
       setSelectedDate(dateStr)
     } catch (err) {
-      setError('Kullanıcı veya etkinlik bulunamadı')
+      setError('User or event not found')
     } finally {
       setLoading(false)
     }
@@ -167,7 +167,7 @@ setError('User or event not found')
   if (error || !user || !eventType) {
     return (
       <div className="container" style={{ paddingTop: '4rem', textAlign: 'center' }}>
-        <p style={{ color: 'var(--red-text)' }}>{error || 'Bulunamadı'}</p>
+        <p style={{ color: 'var(--red-text)' }}>{error || 'Not found'}</p>
       </div>
     )
   }
@@ -302,7 +302,7 @@ setError('User or event not found')
                   value={guestName}
                   onChange={(e) => setGuestName(e.target.value)}
                   required
-                  placeholder="Adınız Soyadınız"
+                  placeholder="Your name"
                   style={{
                     width: '100%',
                     padding: '0.75rem 1rem',

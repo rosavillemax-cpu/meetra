@@ -11,7 +11,7 @@ export async function PATCH(
   const rule = await prisma.availabilityRule.findUnique({ where: { id } })
 
   if (!rule) {
-    return NextResponse.json({ error: 'Kural bulunamadı' }, { status: 404 })
+    return NextResponse.json({ error: 'Availability rule not found' }, { status: 404 })
   }
 
   const { weekday, startTime, endTime, isOverride, overrideDate } = body
@@ -39,7 +39,7 @@ export async function DELETE(
   const rule = await prisma.availabilityRule.findUnique({ where: { id } })
 
   if (!rule) {
-    return NextResponse.json({ error: 'Kural bulunamadı' }, { status: 404 })
+    return NextResponse.json({ error: 'Availability rule not found' }, { status: 404 })
   }
 
   await prisma.availabilityRule.delete({ where: { id } })

@@ -48,7 +48,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
 
   return (
     <>
-      {/* Backdrop overlay — mobile drawer açıkken görünür */}
+      {/* Backdrop overlay — visible when mobile drawer is open */}
       {mobileOpen && (
         <div
           className="sidebar-overlay"
@@ -101,7 +101,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
         </div>
       </aside>
 
-      {/* Mobile top bar — sadece 768px altında görünür */}
+      {/* Mobile top bar — only visible below 768px */}
       <header className="mobile-topbar">
         <Link href="/" className="brand">
           <div className="brand-icon">C</div>
@@ -137,7 +137,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
           to { opacity: 1; }
         }
 
-        /* ── Sidebar — desktop: her zaman görünür fixed left ── */
+        /* ── Sidebar — desktop: always visible, fixed left ── */
         .sidebar {
           width: 280px;
           min-height: 100vh;

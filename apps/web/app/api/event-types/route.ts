@@ -50,7 +50,7 @@ export async function POST(request: Request) {
   })
 
   if (existingSlug) {
-    return NextResponse.json({ error: 'Bu slug zaten kullanılıyor' }, { status: 409 })
+    return NextResponse.json({ error: 'This slug is already in use' }, { status: 409 })
   }
 
   const eventType = await prisma.eventType.create({
