@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { HowItWorksStep, HOW_IT_WORKS_MOCKUPS } from './HowItWorksStep'
 
 const FEATURES = [
   {
@@ -53,18 +54,28 @@ const FEATURES = [
 const STEPS = [
   {
     number: '01',
-    title: 'Create your link',
-    description: 'Set up your event type in minutes. Define duration, availability, and preferences.'
+    title: 'Connect your calendars',
+    description: 'Link Google Calendar or Outlook. Callroom automatically checks for conflicts before confirming any booking.'
   },
   {
     number: '02',
-    title: 'Share your link',
-    description: 'Send your booking link via email, chat, or social media. Or embed it on your website.'
+    title: 'Set your availability',
+    description: 'Define when you are available. Set working hours, add buffers between meetings, and block out personal time.'
   },
   {
     number: '03',
-    title: 'Get booked',
-    description: 'Guests pick a time that works for them. Both parties get instant confirmation.'
+    title: 'Create event types',
+    description: 'Build your event type in seconds. Set a title, duration, and description — then customize every detail.'
+  },
+  {
+    number: '04',
+    title: 'Share your link',
+    description: 'Send your booking link anywhere: email, LinkedIn, Twitter, or embed it directly on your website.'
+  },
+  {
+    number: '05',
+    title: 'Get booked automatically',
+    description: 'Guests pick a time that works for them. Both parties get instant confirmation and calendar invites.'
   }
 ]
 
@@ -183,52 +194,359 @@ export function ProductSection() {
           line-height: 1.6;
         }
 
-        /* Steps */
-        .ps-steps-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 2rem;
+        /* How It Works */
+        .hiw-section {
+          overflow: hidden;
+        }
+        .hiw-steps-container {
           position: relative;
         }
-        .ps-steps-grid::before {
-          content: '';
+        .hiw-steps-line {
           position: absolute;
           top: 28px;
-          left: calc(16.67% + 28px);
-          right: calc(16.67% + 28px);
+          left: 10%;
+          right: 10%;
           height: 2px;
-          background: linear-gradient(90deg, #7c3aed, #4f46e5, #2563eb);
-          opacity: 0.2;
+          background: linear-gradient(90deg, #7c3aed, #4f46e5, #2563eb, #7c3aed);
+          background-size: 200% 100%;
+          opacity: 0.25;
+          border-radius: 1px;
         }
-        .ps-step {
+        .hiw-steps-grid {
+          display: grid;
+          grid-template-columns: repeat(5, 1fr);
+          gap: 1rem;
+          position: relative;
+        }
+        .hiw-step {
           text-align: center;
+          animation: hiw-fade-up 0.6s ease-out both;
         }
-        .ps-step-num {
-          width: 56px;
-          height: 56px;
+        .hiw-step:nth-child(1) { animation-delay: 0ms; }
+        .hiw-step:nth-child(2) { animation-delay: 100ms; }
+        .hiw-step:nth-child(3) { animation-delay: 200ms; }
+        .hiw-step:nth-child(4) { animation-delay: 300ms; }
+        .hiw-step:nth-child(5) { animation-delay: 400ms; }
+        @keyframes hiw-fade-up {
+          from { opacity: 0; transform: translateY(24px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .hiw-mockup {
+          margin-bottom: 1.25rem;
+          transition: transform 0.3s ease;
+        }
+        .hiw-mockup:hover {
+          transform: translateY(-4px) scale(1.02);
+        }
+        .hiw-step-num {
+          width: 48px;
+          height: 48px;
           border-radius: 50%;
           background: linear-gradient(135deg, #7c3aed, #4f46e5);
           color: #ffffff;
-          font-size: 1rem;
+          font-size: 0.875rem;
           font-weight: 700;
           display: flex;
           align-items: center;
           justify-content: center;
-          margin: 0 auto 1.25rem;
+          margin: 0 auto 0.875rem;
           position: relative;
           z-index: 1;
           box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
         }
-        .ps-step-title {
-          font-size: 1.125rem;
+        .hiw-step-title {
+          font-size: 0.9375rem;
           font-weight: 700;
           color: #111827;
+          margin-bottom: 0.375rem;
+          line-height: 1.3;
+        }
+        .hiw-step-desc {
+          font-size: 0.8125rem;
+          color: #6b7280;
+          line-height: 1.55;
+        }
+
+        /* HiW Card shared styles */
+        .hiw-card {
+          background: #ffffff;
+          border-radius: 12px;
+          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+          overflow: hidden;
+          text-align: left;
+        }
+        .hiw-card-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0.625rem 0.875rem;
+          border-bottom: 1px solid #f3f4f6;
+        }
+        .hiw-card-title {
+          font-size: 0.6875rem;
+          font-weight: 600;
+          color: #374151;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+        .hiw-card-body {
+          padding: 0.75rem;
+        }
+        .hiw-badge-connected {
+          font-size: 0.625rem;
+          font-weight: 600;
+          background: #d1fae5;
+          color: #065f46;
+          padding: 0.125rem 0.5rem;
+          border-radius: 999px;
+        }
+        .hiw-cal-row {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.375rem 0;
+        }
+        .hiw-cal-row + .hiw-cal-row {
+          border-top: 1px solid #f3f4f6;
+        }
+        .hiw-cal-icon {
+          width: 24px;
+          height: 24px;
+          border-radius: 4px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #f9fafb;
+        }
+        .hiw-cal-label {
+          flex: 1;
+          font-size: 0.6875rem;
+          color: #374151;
+        }
+        .hiw-check {
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          background: #d1fae5;
+          color: #065f46;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .hiw-connect-btn {
+          display: flex;
+          align-items: center;
+          gap: 0.375rem;
+          margin-top: 0.5rem;
+          padding: 0.375rem 0.75rem;
+          background: #f3f4f6;
+          border-radius: 6px;
+          font-size: 0.6875rem;
+          font-weight: 500;
+          color: #374151;
+          cursor: pointer;
+        }
+
+        /* Availability mockup */
+        .hiw-avail-body {
+          padding: 0.5rem 0.75rem;
+        }
+        .hiw-avail-days {
+          display: flex;
+          gap: 0.25rem;
           margin-bottom: 0.5rem;
         }
-        .ps-step-desc {
-          font-size: 0.9375rem;
+        .hiw-day {
+          flex: 1;
+          text-align: center;
+          font-size: 0.5625rem;
+          font-weight: 600;
+          color: #9ca3af;
+          padding: 0.25rem;
+        }
+        .hiw-day-active {
+          color: #374151;
+        }
+        .hiw-avail-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 0.25rem;
+        }
+        .hiw-slot {
+          padding: 0.25rem;
+          text-align: center;
+          font-size: 0.5625rem;
+          color: #9ca3af;
+          background: #f9fafb;
+          border-radius: 4px;
+          border: 1px solid #f3f4f6;
+        }
+        .hiw-slot-active {
+          background: rgba(124, 58, 237, 0.08);
+          color: #5b21b6;
+          border-color: rgba(124, 58, 237, 0.2);
+        }
+        .hiw-tz {
+          display: flex;
+          align-items: center;
+          gap: 0.375rem;
+          margin-top: 0.5rem;
+          font-size: 0.5625rem;
+          color: #9ca3af;
+        }
+
+        /* Create event mockup */
+        .hiw-form-body {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+        .hiw-field {
+          display: flex;
+          flex-direction: column;
+          gap: 0.125rem;
+        }
+        .hiw-field label {
+          font-size: 0.5625rem;
+          font-weight: 600;
+          color: #9ca3af;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+        }
+        .hiw-field-row {
+          display: flex;
+          gap: 0.5rem;
+        }
+        .hiw-field-row .hiw-field {
+          flex: 1;
+        }
+        .hiw-field-val {
+          font-size: 0.6875rem;
+          color: #374151;
+          background: #f9fafb;
+          border: 1px solid #f3f4f6;
+          border-radius: 4px;
+          padding: 0.25rem 0.375rem;
+        }
+        .hiw-create-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.375rem;
+          padding: 0.375rem;
+          background: linear-gradient(135deg, #7c3aed, #4f46e5);
+          color: #ffffff;
+          border-radius: 6px;
+          font-size: 0.6875rem;
+          font-weight: 600;
+        }
+
+        /* Share mockup */
+        .hiw-share-body {
+          display: flex;
+          flex-direction: column;
+          gap: 0.625rem;
+        }
+        .hiw-url-box {
+          display: flex;
+          align-items: center;
+          background: #f9fafb;
+          border: 1px solid #e5e7eb;
+          border-radius: 6px;
+          overflow: hidden;
+        }
+        .hiw-url-text {
+          flex: 1;
+          padding: 0.375rem 0.5rem;
+          font-size: 0.5625rem;
+          color: #374151;
+          font-family: monospace;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .hiw-copy-btn {
+          padding: 0.375rem 0.625rem;
+          background: #7c3aed;
+          color: #ffffff;
+          font-size: 0.5625rem;
+          font-weight: 600;
+          border: none;
+          cursor: pointer;
+          white-space: nowrap;
+        }
+        .hiw-share-row {
+          display: flex;
+          gap: 0.5rem;
+          justify-content: center;
+        }
+        .hiw-share-icon {
+          width: 28px;
+          height: 28px;
+          border-radius: 6px;
+          background: #f3f4f6;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #374151;
+          cursor: pointer;
+        }
+
+        /* Booked mockup */
+        .hiw-card-booked {
+          background: linear-gradient(135deg, #faf5ff, #eff6ff);
+        }
+        .hiw-booked-body {
+          padding: 0.625rem;
+        }
+        .hiw-booked-slot {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.5rem;
+          background: #ffffff;
+          border-radius: 8px;
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+          margin-bottom: 0.5rem;
+        }
+        .hiw-booked-time {
+          font-size: 0.6875rem;
+          font-weight: 700;
+          color: #7c3aed;
+          white-space: nowrap;
+        }
+        .hiw-booked-info {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 0.125rem;
+        }
+        .hiw-booked-name {
+          font-size: 0.625rem;
+          font-weight: 600;
+          color: #111827;
+        }
+        .hiw-booked-type {
+          font-size: 0.5625rem;
           color: #6b7280;
-          line-height: 1.6;
+        }
+        .hiw-booked-confirm {
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: #d1fae5;
+          color: #065f46;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .hiw-email-snippet {
+          display: flex;
+          align-items: center;
+          gap: 0.375rem;
+          font-size: 0.5625rem;
+          color: #6b7280;
+          padding: 0 0.25rem;
         }
 
         /* Use Cases */
@@ -393,12 +711,20 @@ export function ProductSection() {
         }
 
         /* Responsive */
+        @media (max-width: 900px) {
+          .hiw-steps-grid { grid-template-columns: repeat(3, 1fr); }
+          .hiw-steps-line { display: none; }
+        }
         @media (max-width: 768px) {
           .ps-section { padding: 3rem 0; }
-          .ps-steps-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-          .ps-steps-grid::before { display: none; }
+          .hiw-steps-grid { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+          .hiw-mockup { max-width: 200px; margin: 0 auto 1rem; }
+          .hiw-step { text-align: center; }
           .ps-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
           .ps-cta { border-radius: 16px; padding: 3rem 1.5rem; }
+        }
+        @media (max-width: 480px) {
+          .hiw-steps-grid { grid-template-columns: 1fr; }
         }
       `}</style>
 
@@ -429,7 +755,7 @@ export function ProductSection() {
       </section>
 
       {/* How It Works */}
-      <section className="ps-section">
+      <section className="ps-section hiw-section">
         <div className="ps-container">
           <div className="ps-section-header">
             <div className="ps-section-label">
@@ -439,18 +765,23 @@ export function ProductSection() {
               </svg>
               How It Works
             </div>
-            <h2 className="ps-section-title">Up and running in minutes</h2>
-            <p className="ps-section-sub">Three simple steps to start scheduling meetings without the hassle.</p>
+            <h2 className="ps-section-title">Stop scheduling chaos. Start meeting.</h2>
+            <p className="ps-section-sub">Five minutes to your first booking. No back-and-forth emails, no double bookings.</p>
           </div>
 
-          <div className="ps-steps-grid">
-            {STEPS.map((s, i) => (
-              <div key={i} className="ps-step">
-                <div className="ps-step-num">{s.number}</div>
-                <h3 className="ps-step-title">{s.title}</h3>
-                <p className="ps-step-desc">{s.description}</p>
-              </div>
-            ))}
+          <div className="hiw-steps-container">
+            <div className="hiw-steps-line" />
+            <div className="hiw-steps-grid">
+              {STEPS.map((s, i) => (
+                <HowItWorksStep
+                  key={i}
+                  number={s.number}
+                  title={s.title}
+                  description={s.description}
+                  mockup={HOW_IT_WORKS_MOCKUPS[i]}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
