@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { Calendar, Users, Layers, CheckCircle2, ArrowRight, Plus, Clock, Settings } from 'lucide-react'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -36,6 +37,10 @@ export default async function DashboardPage() {
     prisma.booking.count({ where: { hostId: userId, status: 'confirmed' } }),
     prisma.booking.count({ where: { hostId: userId, startAt: { lt: new Date() }, status: 'confirmed' } })
   ])
+
+  if (eventTypes.length === 0) {
+    redirect('/onboarding')
+  }
 
   const todayStr = new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' })
   const isReturning = (session.user as any)?.isReturning

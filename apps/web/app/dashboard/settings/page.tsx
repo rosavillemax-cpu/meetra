@@ -4,13 +4,37 @@ import { useState, useEffect } from 'react'
 import { User, Globe, Hash } from 'lucide-react'
 
 const TIMEZONES = [
-  'Europe/Istanbul',
-  'America/New_York',
-  'America/Los_Angeles',
-  'Europe/London',
-  'Europe/Berlin',
-  'Asia/Tokyo',
-  'Asia/Dubai',
+  { value: 'America/New_York', label: 'New York (EST/EDT)' },
+  { value: 'America/Chicago', label: 'Chicago (CST/CDT)' },
+  { value: 'America/Denver', label: 'Denver (MST/MDT)' },
+  { value: 'America/Los_Angeles', label: 'Los Angeles (PST/PDT)' },
+  { value: 'America/Toronto', label: 'Toronto (EST/EDT)' },
+  { value: 'America/Vancouver', label: 'Vancouver (PST/PDT)' },
+  { value: 'America/Sao_Paulo', label: 'São Paulo (BRT)' },
+  { value: 'America/Mexico_City', label: 'Mexico City (CST)' },
+  { value: 'Europe/London', label: 'London (GMT/BST)' },
+  { value: 'Europe/Paris', label: 'Paris (CET/CEST)' },
+  { value: 'Europe/Berlin', label: 'Berlin (CET/CEST)' },
+  { value: 'Europe/Amsterdam', label: 'Amsterdam (CET/CEST)' },
+  { value: 'Europe/Madrid', label: 'Madrid (CET/CEST)' },
+  { value: 'Europe/Rome', label: 'Rome (CET/CEST)' },
+  { value: 'Europe/Istanbul', label: 'Istanbul (TRT)' },
+  { value: 'Europe/Moscow', label: 'Moscow (MSK)' },
+  { value: 'Asia/Dubai', label: 'Dubai (GST)' },
+  { value: 'Asia/Kolkata', label: 'Mumbai/Delhi (IST)' },
+  { value: 'Asia/Bangkok', label: 'Bangkok (ICT)' },
+  { value: 'Asia/Singapore', label: 'Singapore (SGT)' },
+  { value: 'Asia/Hong_Kong', label: 'Hong Kong (HKT)' },
+  { value: 'Asia/Tokyo', label: 'Tokyo (JST)' },
+  { value: 'Asia/Seoul', label: 'Seoul (KST)' },
+  { value: 'Asia/Shanghai', label: 'Shanghai (CST)' },
+  { value: 'Australia/Sydney', label: 'Sydney (AEST/AEDT)' },
+  { value: 'Australia/Melbourne', label: 'Melbourne (AEST/AEDT)' },
+  { value: 'Pacific/Auckland', label: 'Auckland (NZST/NZDT)' },
+  { value: 'Pacific/Honolulu', label: 'Honolulu (HST)' },
+  { value: 'Africa/Cairo', label: 'Cairo (EET)' },
+  { value: 'Africa/Lagos', label: 'Lagos (WAT)' },
+  { value: 'Africa/Johannesburg', label: 'Johannesburg (SAST)' },
 ]
 
 export default function SettingsPage() {
@@ -132,7 +156,7 @@ export default function SettingsPage() {
             <label>Timezone</label>
             <select value={timezone} onChange={e => setTimezone(e.target.value)}>
               {TIMEZONES.map(tz => (
-                <option key={tz} value={tz}>{tz.replace('_', ' ')}</option>
+                <option key={tz.value} value={tz.value}>{tz.label}</option>
               ))}
             </select>
           </div>
