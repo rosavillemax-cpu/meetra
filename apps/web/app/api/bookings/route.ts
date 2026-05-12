@@ -22,39 +22,48 @@ async function syncBookingToCalendars(bookingId: string, hostId: string) {
 
   if (!booking) return
 
+  const results = await Promise.all(
+    integrations.map(async (integration) => {
+      try {
+        let eventId: string | null | undefined = null
+
+        if (integration.provider === 'google') {
+          eventId = await createGoogleCalendarEvent({
+            userId: hostId,
+            title: booking.eventType.title || 'Meeting',
+            description: `Booking with ${booking.guestName}`,
+            startTime: new Date(booking.startAt),
+            endTime: new Date(booking.endAt),
+            guestEmail: booking.guestEmail,
+            guestName: booking.guestName
+          })
+        }
+
+        if (integration.provider === 'outlook') {
+          eventId = await createOutlookCalendarEvent({
+            userId: hostId,
+            title: booking.eventType.title || 'Meeting',
+            description: `Booking with ${booking.guestName}`,
+            startTime: new Date(booking.startAt),
+            endTime: new Date(booking.endAt),
+            guestEmail: booking.guestEmail,
+            guestName: booking.guestName
+          })
+        }
+
+        return { provider: integration.provider, eventId }
+      } catch (err) {
+        console.error(`Failed to sync to ${integration.provider}:`, err)
+        return { provider: integration.provider, eventId: null }
+      }
+    })
+  )
+
   const updateData: Record<string, string> = {}
-
-  for (const integration of integrations) {
-    try {
-      let eventId: string | null | undefined = null
-
-      if (integration.provider === 'google') {
-        eventId = await createGoogleCalendarEvent({
-          userId: hostId,
-          title: booking.eventType.title || 'Meeting',
-          description: `Booking with ${booking.guestName}`,
-          startTime: new Date(booking.startAt),
-          endTime: new Date(booking.endAt),
-          guestEmail: booking.guestEmail,
-          guestName: booking.guestName
-        })
-        if (eventId) updateData.googleEventId = eventId
-      }
-
-      if (integration.provider === 'outlook') {
-        eventId = await createOutlookCalendarEvent({
-          userId: hostId,
-          title: booking.eventType.title || 'Meeting',
-          description: `Booking with ${booking.guestName}`,
-          startTime: new Date(booking.startAt),
-          endTime: new Date(booking.endAt),
-          guestEmail: booking.guestEmail,
-          guestName: booking.guestName
-        })
-        if (eventId) updateData.outlookEventId = eventId
-      }
-    } catch (err) {
-      console.error(`Failed to sync to ${integration.provider}:`, err)
+  for (const result of results) {
+    if (result.eventId) {
+      if (result.provider === 'google') updateData.googleEventId = result.eventId
+      if (result.provider === 'outlook') updateData.outlookEventId = result.eventId
     }
   }
 
