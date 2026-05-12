@@ -21,7 +21,6 @@ test.describe('Booking Flow', () => {
 test.describe('Dashboard', () => {
   test('should require authentication', async ({ page }) => {
     await page.goto('/dashboard')
-    // Should redirect to sign in or show auth error
     await expect(page.url()).not.toBe('/dashboard')
   })
 })
@@ -29,8 +28,25 @@ test.describe('Dashboard', () => {
 test.describe('Booking Page', () => {
   test('should show 404 for non-existent user handle', async ({ page }) => {
     await page.goto('/nonexistent-user/test-event')
-    // Should show not found or appropriate error
-    const body = await page.content()
-    expect(body).toBeDefined()
+    await expect(page.getByText(/404|not found|page not found/i)).toBeVisible()
+  })
+
+  test('should display not-found page with homepage link', async ({ page }) => {
+    await page.goto('/nonexistent')
+    await expect(page.getByRole('link', { name: /go to homepage/i })).toBeVisible()
+  })
+})
+
+test.describe('Booking Creation', () => {
+  test.skip('should create a booking end-to-end', async ({ page }) => {
+    // This test requires a pre-existing user with event types
+    // It serves as a template for actual booking flow testing
+    // TODO: Set up test fixtures with authenticated user and event types
+  })
+
+  test.skip('should cancel a booking with cancel token', async ({ page }) => {
+    // This test requires a pre-created booking with a cancel token
+    // It serves as a template for cancel flow testing
+    // TODO: Set up test fixtures
   })
 })
