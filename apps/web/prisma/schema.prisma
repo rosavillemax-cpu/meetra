@@ -41,6 +41,7 @@ model CalendarIntegration {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, provider])
+  @@index([userId])
 }
 
 model Account {
@@ -90,6 +91,8 @@ model AvailabilityRule {
   overrideDate DateTime?
 
   user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 model Team {
@@ -149,6 +152,11 @@ model Booking {
 
   eventType EventType @relation(fields: [eventTypeId], references: [id])
   host      User      @relation(fields: [hostId], references: [id])
+
+  @@index([hostId])
+  @@index([startAt])
+  @@index([status])
+  @@index([eventTypeId])
 }
 
 model EventType {
