@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { EventTypeSchema } from '@/lib/schemas'
+import { auth } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,6 +27,11 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const session = await auth()
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   const body = await request.json()
 
   const validation = EventTypeSchema.safeParse(body)
@@ -36,7 +42,8 @@ export async function POST(request: Request) {
     )
   }
 
-  const { userId, slug, title, description, durationMin, bufferBefore, bufferAfter, color } = validation.data
+  const { slug, title, description, durationMin, bufferBefore, bufferAfter, color } = validation.data
+  const userId = session.user.id
 
   const existingSlug = await prisma.eventType.findFirst({
     where: { userId, slug }

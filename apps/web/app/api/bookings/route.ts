@@ -4,6 +4,7 @@ import { sendBookingConfirmation } from '@/lib/email'
 import { createGoogleCalendarEvent } from '@/lib/google-calendar'
 import { createOutlookCalendarEvent } from '@/lib/outlook-calendar'
 import { BookingSchema } from '@/lib/schemas'
+import { auth } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -66,16 +67,21 @@ async function syncBookingToCalendars(bookingId: string, hostId: string) {
 }
 
 export async function GET(request: Request) {
+  const session = await auth()
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   const { searchParams } = new URL(request.url)
   const hostId = searchParams.get('hostId')
   const status = searchParams.get('status')
   const upcoming = searchParams.get('upcoming')
 
-  if (!hostId) {
-    return NextResponse.json({ error: 'hostId required' }, { status: 400 })
+  if (hostId && hostId !== session.user.id) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  const where: Record<string, unknown> = { hostId }
+  const where: Record<string, unknown> = { hostId: session.user.id }
 
   if (status) {
     where.status = status

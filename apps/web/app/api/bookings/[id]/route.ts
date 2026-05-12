@@ -9,7 +9,14 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const session = await auth()
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   const { id } = await params
+  const { searchParams } = new URL(request.url)
+  const token = searchParams.get('token')
 
   const booking = await prisma.booking.findUnique({
     where: { id },
@@ -21,6 +28,13 @@ export async function GET(
 
   if (!booking) {
     return NextResponse.json({ error: 'Booking not found' }, { status: 404 })
+  }
+
+  const isHost = session.user.id === booking.hostId
+  const hasValidToken = token && booking.cancelToken === token
+
+  if (!isHost && !hasValidToken) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
   return NextResponse.json(booking)
