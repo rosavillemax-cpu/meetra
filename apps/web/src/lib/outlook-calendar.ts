@@ -148,7 +148,23 @@ export async function createOutlookCalendarEvent(params: CreateOutlookEventParam
     return null
   }
 
-  const client = getMicrosoftClient(integration.accessToken)
+  let accessToken = integration.accessToken
+
+  if (integration.expiresAt && integration.expiresAt < new Date()) {
+    console.log('Outlook token expired, refreshing for user:', params.userId)
+    const tokens = await refreshOutlookToken(integration.refreshToken)
+    await prisma.calendarIntegration.update({
+      where: { id: integration.id },
+      data: {
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken || integration.refreshToken,
+        expiresAt: new Date(tokens.expiresAt)
+      }
+    })
+    accessToken = tokens.accessToken
+  }
+
+  const client = getMicrosoftClient(accessToken)
 
   const event = await client.api('/me/events').post({
     subject: params.title,
@@ -189,7 +205,23 @@ export async function deleteOutlookCalendarEvent(userId: string, eventId: string
     return false
   }
 
-  const client = getMicrosoftClient(integration.accessToken)
+  let accessToken = integration.accessToken
+
+  if (integration.expiresAt && integration.expiresAt < new Date()) {
+    console.log('Outlook token expired, refreshing for user:', userId)
+    const tokens = await refreshOutlookToken(integration.refreshToken)
+    await prisma.calendarIntegration.update({
+      where: { id: integration.id },
+      data: {
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken || integration.refreshToken,
+        expiresAt: new Date(tokens.expiresAt)
+      }
+    })
+    accessToken = tokens.accessToken
+  }
+
+  const client = getMicrosoftClient(accessToken)
 
   try {
     await client.api(`/me/events/${eventId}`).delete()

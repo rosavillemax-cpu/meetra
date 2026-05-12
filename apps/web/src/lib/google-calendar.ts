@@ -96,10 +96,27 @@ export async function createGoogleCalendarEvent(params: CreateCalendarEventParam
     return null
   }
 
-  oauth2Client.setCredentials({
-    access_token: integration.accessToken,
-    refresh_token: integration.refreshToken
-  })
+  if (integration.expiresAt && integration.expiresAt < new Date()) {
+    console.log('Google token expired, refreshing for user:', params.userId)
+    const credentials = await refreshGoogleToken(integration.refreshToken)
+    await prisma.calendarIntegration.update({
+      where: { id: integration.id },
+      data: {
+        accessToken: credentials.access_token!,
+        refreshToken: credentials.refresh_token ?? integration.refreshToken,
+        expiresAt: credentials.expiry_date ? new Date(credentials.expiry_date) : new Date(Date.now() + 3600 * 1000)
+      }
+    })
+    oauth2Client.setCredentials({
+      access_token: credentials.access_token!,
+      refresh_token: credentials.refresh_token ?? integration.refreshToken
+    })
+  } else {
+    oauth2Client.setCredentials({
+      access_token: integration.accessToken,
+      refresh_token: integration.refreshToken
+    })
+  }
 
   const calendar = google.calendar({ version: 'v3', auth: oauth2Client })
 
@@ -140,10 +157,27 @@ export async function deleteGoogleCalendarEvent(userId: string, eventId: string)
     return false
   }
 
-  oauth2Client.setCredentials({
-    access_token: integration.accessToken,
-    refresh_token: integration.refreshToken
-  })
+  if (integration.expiresAt && integration.expiresAt < new Date()) {
+    console.log('Google token expired, refreshing for user:', userId)
+    const credentials = await refreshGoogleToken(integration.refreshToken)
+    await prisma.calendarIntegration.update({
+      where: { id: integration.id },
+      data: {
+        accessToken: credentials.access_token!,
+        refreshToken: credentials.refresh_token ?? integration.refreshToken,
+        expiresAt: credentials.expiry_date ? new Date(credentials.expiry_date) : new Date(Date.now() + 3600 * 1000)
+      }
+    })
+    oauth2Client.setCredentials({
+      access_token: credentials.access_token!,
+      refresh_token: credentials.refresh_token ?? integration.refreshToken
+    })
+  } else {
+    oauth2Client.setCredentials({
+      access_token: integration.accessToken,
+      refresh_token: integration.refreshToken
+    })
+  }
 
   const calendar = google.calendar({ version: 'v3', auth: oauth2Client })
 
