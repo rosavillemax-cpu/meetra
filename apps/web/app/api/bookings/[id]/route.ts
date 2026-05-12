@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 import { sendBookingCancellation } from '@/lib/email'
+import { deleteGoogleCalendarEvent } from '@/lib/google-calendar'
+import { deleteOutlookCalendarEvent } from '@/lib/outlook-calendar'
 
 export const dynamic = 'force-dynamic'
 
@@ -68,6 +70,22 @@ export async function DELETE(
 
   if (!isHost && booking.cancelToken !== token) {
     return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
+  }
+
+  if (booking.googleEventId) {
+    try {
+      await deleteGoogleCalendarEvent(booking.hostId, booking.googleEventId)
+    } catch (error) {
+      console.error('Failed to delete Google Calendar event:', error)
+    }
+  }
+
+  if (booking.outlookEventId) {
+    try {
+      await deleteOutlookCalendarEvent(booking.hostId, booking.outlookEventId)
+    } catch (error) {
+      console.error('Failed to delete Outlook Calendar event:', error)
+    }
   }
 
   const updated = await prisma.booking.update({
