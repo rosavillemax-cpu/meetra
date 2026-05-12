@@ -1,6 +1,6 @@
-// Meetra Embed Widget Script
+// Callroom Embed Widget Script
 // Usage: <script src="https://your-domain.com/widget.js" async></script>
-// Then: <div data-meetra-book="handle/slug" data-theme="#6332E5"></div>
+// Then: <div data-callroom-book="handle/slug" data-theme="#6332E5"></div>
 
 (function() {
   'use strict';
@@ -9,7 +9,7 @@
 
   function createPopup(config) {
     const overlay = document.createElement('div');
-    overlay.id = 'meetra-overlay';
+    overlay.id = 'callroom-overlay';
     overlay.style.cssText = `
       position: fixed;
       inset: 0;
@@ -18,7 +18,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      animation: meetra-fade-in 0.2s ease;
+      animation: callroom-fade-in 0.2s ease;
     `;
 
     const container = document.createElement('div');
@@ -30,7 +30,7 @@
       max-height: 90vh;
       overflow: auto;
       box-shadow: 0 25px 50px rgba(0,0,0,0.25);
-      animation: meetra-slide-up 0.2s ease;
+      animation: callroom-slide-up 0.2s ease;
     `;
 
     const iframe = document.createElement('iframe');
@@ -77,11 +77,11 @@
 
     const style = document.createElement('style');
     style.textContent = `
-      @keyframes meetra-fade-in {
+      @keyframes callroom-fade-in {
         from { opacity: 0; }
         to { opacity: 1; }
       }
-      @keyframes meetra-slide-up {
+      @keyframes callroom-slide-up {
         from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
       }
@@ -92,17 +92,17 @@
   }
 
   function closePopup() {
-    const overlay = document.getElementById('meetra-overlay');
+    const overlay = document.getElementById('callroom-overlay');
     if (overlay) {
       overlay.remove();
     }
   }
 
   function init() {
-    const widgets = document.querySelectorAll('[data-meetra-book]');
+    const widgets = document.querySelectorAll('[data-callroom-book]');
 
     widgets.forEach(function(widget) {
-      const bookData = widget.getAttribute('data-meetra-book');
+      const bookData = widget.getAttribute('data-callroom-book');
       const theme = widget.getAttribute('data-theme') || '#6332E5';
 
       if (bookData) {
@@ -147,7 +147,7 @@
     init();
   }
 
-  window.Meetra = {
+  window.Callroom = {
     openPopup: function(config) {
       createPopup(config);
     },

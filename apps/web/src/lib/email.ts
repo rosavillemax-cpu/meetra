@@ -8,7 +8,7 @@ const getResend = () => {
   return new Resend(process.env.RESEND_API_KEY)
 }
 
-const FROM_EMAIL = 'Meetra <noreply@meetra.com>'
+const FROM_EMAIL = 'Callroom <noreply@callroom.com>'
 
 interface BookingEmailData {
   guestName: string;
@@ -113,7 +113,7 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
           
           <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #eee;">
             <p style="color: #999; font-size: 12px; margin: 0;">
-              Powered by <strong style="color: #6332E5;">Meetra</strong>
+              Powered by <strong style="color: #6332E5;">Callroom</strong>
             </p>
           </div>
         </body>
@@ -177,7 +177,7 @@ export async function sendBookingReminder(data: ReminderEmailData) {
           
           <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #eee;">
             <p style="color: #999; font-size: 12px; margin: 0;">
-              Powered by <strong style="color: #6332E5;">Meetra</strong>
+              Powered by <strong style="color: #6332E5;">Callroom</strong>
             </p>
           </div>
         </body>
@@ -236,7 +236,7 @@ export async function sendBookingCancellation(data: CancellationEmailData) {
           
           <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #eee;">
             <p style="color: #999; font-size: 12px; margin: 0;">
-              Powered by <strong style="color: #6332E5;">Meetra</strong>
+              Powered by <strong style="color: #6332E5;">Callroom</strong>
             </p>
           </div>
         </body>
@@ -259,7 +259,7 @@ export async function sendTestEmail(to: string) {
     const response = await resend.emails.send({
       from: FROM_EMAIL,
       to: to,
-      subject: 'Meetra Email Test',
+      subject: 'Callroom Email Test',
       html: `
         <!DOCTYPE html>
         <html>
@@ -271,10 +271,10 @@ export async function sendTestEmail(to: string) {
           <div style="text-align: center; margin-bottom: 32px;">
             <h1 style="color: #6332E5; margin: 0;">✓ Email Working!</h1>
           </div>
-          <p style="color: #666;">This is a test email from Meetra. Your email system is configured correctly.</p>
+          <p style="color: #666;">This is a test email from Callroom. Your email system is configured correctly.</p>
           <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #eee;">
             <p style="color: #999; font-size: 12px; margin: 0;">
-              Powered by <strong style="color: #6332E5;">Meetra</strong>
+              Powered by <strong style="color: #6332E5;">Callroom</strong>
             </p>
           </div>
         </body>

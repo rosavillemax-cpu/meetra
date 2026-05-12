@@ -1,5 +1,5 @@
 {
-  "name": "meetra",
+  "name": "callroom",
   "private": true,
   "scripts": {
     "build": "cd apps/web && npm run build",

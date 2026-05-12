@@ -8,7 +8,7 @@ const prisma = new PrismaClient()
 app.register(cors, { origin: 'http://localhost:3000' })
 
 app.get('/health', async () => {
-  return { status: 'ok', app: 'meetra' }
+  return { status: 'ok', app: 'callroom' }
 })
 
 // Kullanıcı oluştur
