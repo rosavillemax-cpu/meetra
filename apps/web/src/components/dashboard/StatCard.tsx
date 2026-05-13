@@ -15,9 +15,10 @@ interface StatCardProps {
   icon: ReactNode
   accent?: string
   sparkIndex?: number
+  helperText?: string
 }
 
-export function StatCard({ label, value, icon, accent = 'var(--primary)', sparkIndex = 0 }: StatCardProps) {
+export function StatCard({ label, value, icon, accent = 'var(--primary)', sparkIndex = 0, helperText }: StatCardProps) {
   return (
     <div className="stat-card">
       <div className="stat-header">
@@ -25,6 +26,7 @@ export function StatCard({ label, value, icon, accent = 'var(--primary)', sparkI
         <span className="stat-label">{label}</span>
       </div>
       <div className="stat-value">{value}</div>
+      {helperText && <span className="stat-helper">{helperText}</span>}
       <svg className="sparkline" viewBox="0 0 64 20" fill="none" preserveAspectRatio="none">
         <path
           d={SPARKS[sparkIndex % SPARKS.length]}
@@ -83,6 +85,12 @@ export function StatCard({ label, value, icon, accent = 'var(--primary)', sparkI
           font-variant-numeric: tabular-nums;
           letter-spacing: -0.04em;
           margin-bottom: 0.875rem;
+        }
+        .stat-helper {
+          font-size: 0.7rem;
+          color: var(--text-tertiary);
+          margin-bottom: 0.5rem;
+          display: block;
         }
         .sparkline {
           width: 100%;

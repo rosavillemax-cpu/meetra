@@ -13,12 +13,10 @@ export async function GET(
     where: { handle },
     select: {
       id: true,
-      email: true,
       name: true,
       image: true,
       handle: true,
       timezone: true,
-      createdAt: true,
       eventTypes: {
         where: { active: true },
         orderBy: { title: 'asc' }

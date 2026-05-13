@@ -189,6 +189,19 @@ export function WeekStrip({ bookings }: WeekStripProps) {
         .day.selected {
           background: var(--primary-bg);
           border-color: var(--primary);
+          box-shadow: 0 0 0 3px rgba(99,50,229,0.15);
+          transform: scale(1.03);
+        }
+        .day.busy:not(.today):not(.selected) {
+          background: rgba(255,255,255,0.04);
+        }
+        .day:hover {
+          background: var(--surface-hover);
+        }
+        .day.today {
+          background: var(--primary-bg);
+          border-color: rgba(167,139,250,0.3);
+          animation: today-glow 3s ease-in-out infinite;
         }
         .day.busy:not(.today):not(.selected) {
           background: rgba(255,255,255,0.03);

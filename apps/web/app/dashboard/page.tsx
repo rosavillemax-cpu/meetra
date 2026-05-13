@@ -6,6 +6,8 @@ import { prisma } from '@/lib/prisma'
 import { StatCard } from '@/components/dashboard/StatCard'
 import { BookingCard } from '@/components/bookings/BookingCard'
 import { WeekStrip } from '@/components/dashboard/WeekStrip'
+import { CopyBookingLink } from '@/components/dashboard/CopyBookingLink'
+import { BookingLinkCard } from '@/components/dashboard/BookingLinkCard'
 import type { BookingWithRelations } from '@/components/dashboard/WeekStrip'
 
 function getGreeting(name: string | null | undefined, isReturning?: boolean) {
@@ -19,7 +21,7 @@ export default async function DashboardPage() {
 
   const userId = session.user.id
 
-  const [upcomingBookings, eventTypes, totalBookings, pastBookingsCount] = await Promise.all([
+  const [upcomingBookings, eventTypes, totalBookings, pastBookingsCount, userHandle] = await Promise.all([
     prisma.booking.findMany({
       where: { hostId: userId, status: 'confirmed', startAt: { gte: new Date() } },
       include: {
@@ -35,7 +37,8 @@ export default async function DashboardPage() {
       take: 6
     }),
     prisma.booking.count({ where: { hostId: userId, status: 'confirmed' } }),
-    prisma.booking.count({ where: { hostId: userId, startAt: { lt: new Date() }, status: 'confirmed' } })
+    prisma.booking.count({ where: { hostId: userId, startAt: { lt: new Date() }, status: 'confirmed' } }),
+    prisma.user.findUnique({ where: { id: userId }, select: { handle: true } })
   ])
 
   if (eventTypes.length === 0) {
@@ -51,12 +54,13 @@ export default async function DashboardPage() {
 
       {/* ─── Welcome ─── */}
       <div className="welcome">
-        <div>
-          <div className="greeting-pill">
+        <div className="welcome-left">
+          <div className="welcome-heading">
             <span className="pulse-dot" />
-            {greeting}
+            <h1>{greeting}</h1>
           </div>
           <p className="date-str">{todayStr}</p>
+          <p className="welcome-helper">Here&apos;s what&apos;s happening with your bookings today.</p>
         </div>
         <Link href="/dashboard/event-types" className="new-btn">
           <Plus size={14} strokeWidth={2.5} />
@@ -67,18 +71,20 @@ export default async function DashboardPage() {
       {/* ─── Stats ─── */}
       <div className="stats">
         <StatCard
-          label="Upcoming"
+          label="Upcoming bookings"
           value={upcomingBookings.length}
           icon={<Calendar size={14} />}
           accent="var(--primary)"
           sparkIndex={0}
+          helperText="Last 7 days"
         />
         <StatCard
-          label="Total"
+          label="Total bookings"
           value={totalBookings}
           icon={<Users size={14} />}
           accent="var(--success)"
           sparkIndex={1}
+          helperText="All time"
         />
         <StatCard
           label="Event types"
@@ -88,11 +94,12 @@ export default async function DashboardPage() {
           sparkIndex={2}
         />
         <StatCard
-          label="Past"
+          label="Past bookings"
           value={pastBookingsCount}
           icon={<CheckCircle2 size={14} />}
           accent="var(--text-tertiary)"
           sparkIndex={3}
+          helperText="Completed"
         />
       </div>
 
@@ -137,10 +144,10 @@ export default async function DashboardPage() {
                 <rect x="41" y="78" width="13" height="10" rx="2" fill="currentColor" opacity="0.12" />
                 <rect x="22" y="46" width="13" height="10" rx="2" stroke="currentColor" strokeOpacity="0.4" />
               </svg>
-              <p className="empty-title">No bookings</p>
-              <p className="empty-sub">You don&apos;t have any upcoming bookings.<br />Get started by setting your availability.</p>
+              <p className="empty-title">No upcoming bookings yet</p>
+              <p className="empty-sub">Share your booking link or create an event type to start receiving bookings.</p>
               <Link href="/dashboard/event-types" className="empty-cta">
-                Create event type →
+                Create event type
               </Link>
             </div>
           )}
@@ -148,6 +155,11 @@ export default async function DashboardPage() {
 
         {/* Right sidebar */}
         <aside className="sidebar-col">
+
+          {/* Booking link card */}
+          {userHandle && (
+            <BookingLinkCard handle={userHandle.handle} />
+          )}
 
           {/* Event types */}
           <div className="panel">
@@ -205,6 +217,9 @@ export default async function DashboardPage() {
                 <span>All bookings</span>
                 <ArrowRight size={11} className="ql-arrow" />
               </Link>
+              {userHandle && (
+                <CopyBookingLink handle={userHandle.handle} />
+              )}
             </div>
           </div>
 
@@ -227,33 +242,45 @@ export default async function DashboardPage() {
           border-bottom: 1px solid var(--border);
           gap: 1rem;
         }
-        .greeting-pill {
-          display: inline-flex;
+        .welcome-left {
+          display: flex;
+          flex-direction: column;
+          gap: 0.2rem;
+        }
+        .welcome-heading {
+          display: flex;
           align-items: center;
-          gap: 0.4rem;
-          padding: 0.25rem 0.75rem;
-          background: var(--primary-bg);
-          border: 1px solid rgba(167,139,250,0.25);
-          border-radius: 999px;
-          font-size: 0.9375rem;
-          font-weight: 600;
-          color: var(--primary);
+          gap: 0.5rem;
         }
         .pulse-dot {
-          width: 5px;
-          height: 5px;
+          width: 7px;
+          height: 7px;
           border-radius: 50%;
           background: var(--primary);
           animation: pulse 2.2s ease-in-out infinite;
+          flex-shrink: 0;
         }
         @keyframes pulse {
           0%, 100% { opacity: 1; transform: scale(1); }
           50% { opacity: 0.45; transform: scale(0.8); }
         }
+        .welcome-heading h1 {
+          font-size: 1.625rem;
+          font-weight: 700;
+          color: var(--text-primary);
+          margin: 0;
+          line-height: 1.1;
+        }
         .date-str {
-          font-size: 0.8125rem;
+          font-size: 0.875rem;
           color: var(--text-tertiary);
           margin: 0;
+          font-weight: 400;
+        }
+        .welcome-helper {
+          font-size: 0.8125rem;
+          color: var(--text-secondary);
+          margin: 0.25rem 0 0;
         }
         .new-btn {
           display: inline-flex;
