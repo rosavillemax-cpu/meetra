@@ -1,6 +1,5 @@
 import NextAuth from 'next-auth'
 import Google from 'next-auth/providers/google'
-import Microsoft from 'next-auth/providers/microsoft-entra-id'
 import { prisma } from '@/lib/prisma'
 
 const trimEnv = (key: string) => {
@@ -11,8 +10,6 @@ const trimEnv = (key: string) => {
 
 const googleId = trimEnv('AUTH_GOOGLE_ID')
 const googleSecret = trimEnv('AUTH_GOOGLE_SECRET')
-const microsoftId = trimEnv('AUTH_MICROSOFT_ID')
-const microsoftSecret = trimEnv('AUTH_MICROSOFT_SECRET')
 
 if (!googleId || !googleSecret) {
   console.error('AUTH_GOOGLE_ID and AUTH_GOOGLE_SECRET are required for authentication to work')
@@ -95,10 +92,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       clientId: googleId || '',
       clientSecret: googleSecret || '',
     }),
-    ...(microsoftId && microsoftSecret ? [Microsoft({
-      clientId: microsoftId,
-      clientSecret: microsoftSecret,
-    })] : []),
   ],
   session: {
     strategy: 'jwt',
@@ -115,7 +108,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session
     },
     async jwt({ token, user, account }) {
-      if ((account?.provider === 'google' || account?.provider === 'microsoft') && user?.email) {
+      if (account?.provider === 'google' && user?.email) {
         try {
           let dbUser = await prisma.user.findUnique({ where: { email: user.email } })
           if (!dbUser && user.email) {
