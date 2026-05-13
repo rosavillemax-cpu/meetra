@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import type { AvailabilityRule } from '@prisma/client'
+import type { ToastType } from '@/components/ui/Toast'
 
 const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const WEEKDAYS_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -12,13 +13,15 @@ interface WeekScheduleProps {
   onAddRule?: (weekday: number, startTime: string, endTime: string) => void
   onDeleteRule?: (rule: AvailabilityRule) => void
   onUpdateRule?: (rule: AvailabilityRule) => void
+  addToast?: (type: ToastType, message: string) => void
 }
 
-export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: WeekScheduleProps) {
+export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule, addToast }: WeekScheduleProps) {
   const [selectedDay, setSelectedDay] = useState<number | null>(null)
   const [startTime, setStartTime] = useState('09:00')
-  const [endTime, setEndTime] = useState('18:00')
+  const [endTime, setEndTime] = useState('17:00')
   const [closedDays, setClosedDays] = useState<Set<number>>(new Set())
+  const [validationError, setValidationError] = useState<string | null>(null)
 
   const getRulesForDay = (weekday: number) => {
     return rules.filter(r => r.weekday === weekday && !r.isOverride)
@@ -35,9 +38,23 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
 
   const handleAddSlot = () => {
     if (selectedDay === null) return
+    setValidationError(null)
+    if (!startTime) {
+      setValidationError('Start time is required')
+      return
+    }
+    if (!endTime) {
+      setValidationError('End time is required')
+      return
+    }
+    if (endTime <= startTime) {
+      setValidationError('End time must be after start time')
+      return
+    }
     onAddRule?.(selectedDay, startTime, endTime)
+    addToast?.('success', 'Time slot added')
     setStartTime('09:00')
-    setEndTime('18:00')
+    setEndTime('17:00')
     setSelectedDay(null)
   }
 
@@ -94,7 +111,7 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
                 )}
               </div>
 
-              {/* Right side: add button + toggle */}
+              {/* Right side: add button + badge + toggle */}
               <div className="col-right">
                 {!isClosed && (
                   <button
@@ -106,6 +123,12 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
                     <span>Add</span>
                   </button>
                 )}
+
+                {/* Status badge */}
+                <span className={`status-badge ${isClosed ? 'status-unavailable' : 'status-available'}`}>
+                  <span className="status-dot" />
+                  {isClosed ? 'Unavailable' : 'Available'}
+                </span>
 
                 {/* Toggle switch */}
                 <button
@@ -123,27 +146,36 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
               <div className="row-form" onClick={e => e.stopPropagation()}>
                 <span className="form-label">Add new time slot</span>
                 <div className="form-row">
-                  <input
-                    type="time"
-                    value={startTime}
-                    onChange={e => setStartTime(e.target.value)}
-                    className="time-input"
-                  />
+                  <div className="time-field">
+                    <label className="time-label">Start time</label>
+                    <input
+                      type="time"
+                      value={startTime}
+                      onChange={e => { setStartTime(e.target.value); setValidationError(null); }}
+                      className="time-input"
+                    />
+                  </div>
                   <span className="time-sep">—</span>
-                  <input
-                    type="time"
-                    value={endTime}
-                    onChange={e => setEndTime(e.target.value)}
-                    className="time-input"
-                  />
+                  <div className="time-field">
+                    <label className="time-label">End time</label>
+                    <input
+                      type="time"
+                      value={endTime}
+                      onChange={e => { setEndTime(e.target.value); setValidationError(null); }}
+                      className="time-input"
+                    />
+                  </div>
                   <button onClick={handleAddSlot} className="submit-btn">
                     <Plus size={13} />
                     Add
                   </button>
-                  <button onClick={() => setSelectedDay(null)} className="cancel-btn">
+                  <button onClick={() => { setSelectedDay(null); setValidationError(null); }} className="cancel-btn">
                     Cancel
                   </button>
                 </div>
+                {validationError && (
+                  <span className="validation-error">{validationError}</span>
+                )}
               </div>
             )}
           </div>
@@ -280,12 +312,38 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
           color: var(--text-tertiary);
         }
 
+        /* ── Status badge ── */
+        .status-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+          padding: 0.2rem 0.5rem;
+          border-radius: 999px;
+          font-size: 0.6875rem;
+          font-weight: 500;
+          white-space: nowrap;
+        }
+        .status-available {
+          background: rgba(45, 106, 79, 0.1);
+          color: var(--success);
+        }
+        .status-unavailable {
+          background: var(--error-bg);
+          color: var(--error);
+        }
+        .status-dot {
+          width: 5px;
+          height: 5px;
+          border-radius: 50%;
+          background: currentColor;
+        }
+
         /* ── Right side ── */
         .col-right {
           display: flex;
           align-items: center;
           justify-content: flex-end;
-          gap: 0.75rem;
+          gap: 0.5rem;
         }
         .add-btn {
           display: inline-flex;
@@ -366,8 +424,20 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
         }
         .form-row {
           display: flex;
-          align-items: center;
+          align-items: flex-end;
           gap: 0.5rem;
+        }
+        .time-field {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+        }
+        .time-label {
+          font-size: 0.6875rem;
+          font-weight: 500;
+          color: var(--text-secondary);
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
         }
         .time-input {
           width: 90px;
@@ -386,6 +456,7 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
         .time-sep {
           font-size: 0.8125rem;
           color: var(--text-tertiary);
+          padding-bottom: 0.4rem;
         }
         .submit-btn {
           display: inline-flex;
@@ -416,6 +487,11 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
         }
         .cancel-btn:hover {
           background: var(--surface-hover);
+        }
+        .validation-error {
+          font-size: 0.75rem;
+          color: var(--error);
+          font-weight: 500;
         }
 
         /* ── Responsive ── */
@@ -455,6 +531,7 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
           }
           .form-row {
             flex-wrap: wrap;
+            align-items: flex-start;
           }
         }
         @media (max-width: 480px) {
@@ -463,6 +540,12 @@ export function WeekSchedule({ rules, onAddRule, onDeleteRule, onUpdateRule }: W
           }
           .add-btn {
             padding: 0.3rem 0.5rem;
+          }
+          .status-badge span:last-child {
+            display: none;
+          }
+          .time-input {
+            width: 80px;
           }
         }
       `}</style>
