@@ -7,7 +7,7 @@ import { StatCard } from '@/components/dashboard/StatCard'
 import { BookingCard } from '@/components/bookings/BookingCard'
 import { WeekStrip } from '@/components/dashboard/WeekStrip'
 import { CopyBookingLink } from '@/components/dashboard/CopyBookingLink'
-import { BookingLinkCard } from '@/components/dashboard/BookingLinkCard'
+import { BookingLinksList } from '@/components/dashboard/BookingLinksList'
 import type { BookingWithRelations } from '@/components/dashboard/WeekStrip'
 
 function getGreeting(name: string | null | undefined, isReturning?: boolean) {
@@ -156,9 +156,9 @@ export default async function DashboardPage() {
         {/* Right sidebar */}
         <aside className="sidebar-col">
 
-          {/* Booking link card */}
-          {userHandle && (
-            <BookingLinkCard handle={userHandle.handle} />
+          {/* Direct booking links per event type */}
+          {userHandle && eventTypes.length > 0 && (
+            <BookingLinksList handle={userHandle.handle} eventTypes={eventTypes} />
           )}
 
           {/* Event types */}
