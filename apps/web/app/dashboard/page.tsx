@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { Calendar, Users, Layers, CheckCircle2, ArrowRight, Plus, Clock, Settings } from 'lucide-react'
-import { auth } from '@/lib/auth'
+import { auth, getTrialStatus, isTrialExpired, getDaysRemaining, isTrialValid } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { StatCard } from '@/components/dashboard/StatCard'
 import { BookingCard } from '@/components/bookings/BookingCard'
@@ -15,13 +15,40 @@ function getGreeting(name: string | null | undefined, isReturning?: boolean) {
   return isReturning ? `Welcome back, ${firstName}!` : `Welcome, ${firstName}!`
 }
 
+function TrialBanner({ daysRemaining }: { daysRemaining: number }) {
+  const isUrgent = daysRemaining <= 2
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '0.625rem 1rem',
+      background: isUrgent ? 'rgba(239,68,68,0.1)' : 'rgba(124,58,237,0.08)',
+      border: `1px solid ${isUrgent ? 'rgba(239,68,68,0.2)' : 'rgba(124,58,237,0.15)'}`,
+      borderRadius: 'var(--radius)',
+      marginBottom: '1rem',
+      fontSize: '0.875rem',
+      color: isUrgent ? '#ef4444' : '#7c3aed',
+      fontWeight: 500
+    }}>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+      {isUrgent
+        ? `Your free trial ends soon — ${daysRemaining} day${daysRemaining === 1 ? '' : 's'} left.`
+        : `Free trial: ${daysRemaining} day${daysRemaining === 1 ? '' : 's'} remaining`}
+    </div>
+  )
+}
+
 export default async function DashboardPage() {
   const session = await auth()
   if (!session?.user?.id) return null
 
   const userId = session.user.id
 
-  const [upcomingBookings, eventTypes, totalBookings, pastBookingsCount, userHandle] = await Promise.all([
+  const [upcomingBookings, eventTypes, totalBookings, pastBookingsCount, userHandle, trialInfo] = await Promise.all([
     prisma.booking.findMany({
       where: { hostId: userId, status: 'confirmed', startAt: { gte: new Date() } },
       include: {
@@ -38,12 +65,20 @@ export default async function DashboardPage() {
     }),
     prisma.booking.count({ where: { hostId: userId, status: 'confirmed' } }),
     prisma.booking.count({ where: { hostId: userId, startAt: { lt: new Date() }, status: 'confirmed' } }),
-    prisma.user.findUnique({ where: { id: userId }, select: { handle: true } })
+    prisma.user.findUnique({ where: { id: userId }, select: { handle: true } }),
+    getTrialStatus(userId)
   ])
+
+  if (isTrialExpired(trialInfo) && eventTypes.length > 0) {
+    redirect('/')
+  }
 
   if (eventTypes.length === 0) {
     redirect('/onboarding')
   }
+
+  const daysRemaining = getDaysRemaining(trialInfo)
+  const showTrialBanner = trialInfo.status === 'trialing' && daysRemaining !== null && daysRemaining > 0
 
   const todayStr = new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' })
   const isReturning = (session.user as any)?.isReturning
@@ -51,6 +86,8 @@ export default async function DashboardPage() {
 
   return (
     <div className="page">
+
+      {showTrialBanner && <TrialBanner daysRemaining={daysRemaining!} />}
 
       {/* ─── Welcome ─── */}
       <div className="welcome">

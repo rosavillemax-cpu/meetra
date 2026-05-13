@@ -17,6 +17,11 @@ model User {
   timezone      String    @default("Europe/Istanbul")
   createdAt     DateTime  @default(now())
 
+  trialStartedAt     DateTime?
+  trialEndsAt        DateTime?
+  subscriptionStatus String  @default("trialing")
+  plan               String  @default("free_trial")
+
   eventTypes        EventType[]
   availabilityRules AvailabilityRule[]
   bookingsAsHost    Booking[]

@@ -2,6 +2,7 @@
 
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar'
 import { ToastProvider } from '@/components/ui/Toast'
+import { TrialBanner } from '@/components/dashboard/TrialBanner'
 
 const SIDEBAR_WIDTH = 280
 
@@ -12,6 +13,7 @@ export default function DashboardLayout({
 }) {
   return (
     <ToastProvider>
+      <TrialBanner />
       <div style={{
         display: 'flex',
         minHeight: '100vh',
