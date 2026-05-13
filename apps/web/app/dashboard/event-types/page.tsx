@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Plus } from 'lucide-react'
 import { EventTypeCard } from '@/components/event-types/EventTypeCard'
 import { CreateEventTypeModal } from '@/components/event-types/CreateEventTypeModal'
+import { useToast } from '@/components/ui/Toast'
 import type { EventType } from '@prisma/client'
 
 type EventTypeWithCount = EventType & {
@@ -12,6 +13,7 @@ type EventTypeWithCount = EventType & {
 }
 
 export default function EventTypesPage() {
+  const { addToast } = useToast()
   const [eventTypes, setEventTypes] = useState<EventTypeWithCount[]>([])
   const [loading, setLoading] = useState(true)
   const [showCreateModal, setShowCreateModal] = useState(false)
@@ -44,6 +46,8 @@ export default function EventTypesPage() {
     description?: string
     durationMin: number
     color: string
+    locationType: string
+    customLocation?: string
   }) => {
     if (!userId) return
 
@@ -56,6 +60,11 @@ export default function EventTypesPage() {
     if (res.ok) {
       const newEventType = await res.json()
       setEventTypes(prev => [newEventType, ...prev])
+      addToast('success', `Created "${data.title}"`)
+      setShowCreateModal(false)
+    } else {
+      const err = await res.json()
+      addToast('error', err.error || 'Failed to create event type')
     }
   }
 

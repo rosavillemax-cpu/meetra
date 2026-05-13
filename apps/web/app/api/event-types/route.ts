@@ -42,7 +42,7 @@ export async function POST(request: Request) {
     )
   }
 
-  const { slug, title, description, durationMin, bufferBefore, bufferAfter, color } = validation.data
+  const { slug, title, description, durationMin, bufferBefore, bufferAfter, color, locationType, customLocation } = validation.data
   const userId = session.user.id
 
   const existingSlug = await prisma.eventType.findFirst({
@@ -62,7 +62,9 @@ export async function POST(request: Request) {
       durationMin: durationMin || 30,
       bufferBefore: bufferBefore || 0,
       bufferAfter: bufferAfter || 0,
-      color: color || '#000000'
+      color: color || '#000000',
+      locationType: locationType || 'google-meet',
+      customLocation: customLocation || null,
     },
     include: {
       user: { select: { id: true, handle: true, name: true, image: true } }

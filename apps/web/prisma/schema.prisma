@@ -172,6 +172,8 @@ model EventType {
   active       Boolean @default(true)
   teamId       String?
   isTeamEvent  Boolean @default(false)
+  locationType   String @default("google-meet")
+  customLocation String?
 
   user        User           @relation(fields: [userId], references: [id])
   bookings    Booking[]

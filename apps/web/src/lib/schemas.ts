@@ -23,9 +23,14 @@ export const EventTypeSchema = z.object({
   bufferBefore: z.number().int().min(0).max(60).optional(),
   bufferAfter: z.number().int().min(0).max(60).optional(),
   color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid color format').optional(),
+  locationType: z.enum(['google-meet', 'phone', 'in-person', 'custom']).optional(),
+  customLocation: z.string().max(200, 'Custom location too long').optional(),
 })
 
-export const EventTypeUpdateSchema = EventTypeSchema.partial()
+export const EventTypeUpdateSchema = EventTypeSchema.partial().extend({
+  locationType: z.enum(['google-meet', 'phone', 'in-person', 'custom']).optional(),
+  customLocation: z.string().max(200, 'Custom location too long').optional(),
+})
 
 export const AvailabilitySchema = z.object({
   userId: z.string().min(1, 'userId is required'),

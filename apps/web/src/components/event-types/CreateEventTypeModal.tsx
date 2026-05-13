@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { X } from 'lucide-react'
+import { X, MapPin, Phone, Video, Globe } from 'lucide-react'
 import type { EventType } from '@prisma/client'
 
 interface CreateEventTypeModalProps {
@@ -13,6 +13,8 @@ interface CreateEventTypeModalProps {
     description?: string
     durationMin: number
     color: string
+    locationType: string
+    customLocation?: string
   }) => void
 }
 
@@ -24,12 +26,22 @@ const COLORS = [
 
 const DURATIONS = [15, 30, 45, 60, 90, 120]
 
+const LOCATION_TYPES = [
+  { value: 'google-meet', label: 'Google Meet', icon: Video },
+  { value: 'phone', label: 'Phone call', icon: Phone },
+  { value: 'in-person', label: 'In person', icon: MapPin },
+  { value: 'custom', label: 'Custom', icon: Globe },
+]
+
 export function CreateEventTypeModal({ isOpen, onClose, onSubmit }: CreateEventTypeModalProps) {
   const [title, setTitle] = useState('')
   const [slug, setSlug] = useState('')
   const [description, setDescription] = useState('')
   const [durationMin, setDurationMin] = useState(30)
   const [color, setColor] = useState('#000000')
+  const [locationType, setLocationType] = useState('google-meet')
+  const [customLocation, setCustomLocation] = useState('')
+  const [errors, setErrors] = useState<{ title?: string; slug?: string; duration?: string }>({})
 
   if (!isOpen) return null
 
@@ -50,19 +62,27 @@ export function CreateEventTypeModal({ isOpen, onClose, onSubmit }: CreateEventT
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+
+    const newErrors: { title?: string; slug?: string; duration?: string } = {}
+    if (!title.trim()) newErrors.title = 'Title is required'
+    if (!slug.trim()) newErrors.slug = 'Slug is required'
+    if (durationMin <= 0) newErrors.duration = 'Duration must be positive'
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      return
+    }
+
+    setErrors({})
     onSubmit({
       title,
       slug,
       description,
       durationMin,
-      color
+      color,
+      locationType,
+      customLocation: locationType === 'custom' ? customLocation : undefined,
     })
-    setTitle('')
-    setSlug('')
-    setDescription('')
-    setDurationMin(30)
-    setColor('#000000')
-    onClose()
   }
 
   return (
@@ -85,6 +105,7 @@ export function CreateEventTypeModal({ isOpen, onClose, onSubmit }: CreateEventT
               placeholder="15-minute introduction call"
               required
             />
+            {errors.title && <span className="field-error">{errors.title}</span>}
           </div>
 
           <div className="form-group">
@@ -99,6 +120,7 @@ export function CreateEventTypeModal({ isOpen, onClose, onSubmit }: CreateEventT
                 required
               />
             </div>
+            {errors.slug && <span className="field-error">{errors.slug}</span>}
           </div>
 
           <div className="form-group">
@@ -122,6 +144,7 @@ export function CreateEventTypeModal({ isOpen, onClose, onSubmit }: CreateEventT
                   <option key={d} value={d}>{d} minutes</option>
                 ))}
               </select>
+              {errors.duration && <span className="field-error">{errors.duration}</span>}
             </div>
 
             <div className="form-group">
@@ -139,6 +162,35 @@ export function CreateEventTypeModal({ isOpen, onClose, onSubmit }: CreateEventT
               </div>
             </div>
           </div>
+
+          <div className="form-group">
+            <label>Location</label>
+            <div className="location-picker">
+              {LOCATION_TYPES.map(({ value, label, icon: Icon }) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={`location-btn ${locationType === value ? 'selected' : ''}`}
+                  onClick={() => setLocationType(value)}
+                >
+                  <Icon size={14} />
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {locationType === 'custom' && (
+            <div className="form-group">
+              <label>Custom location</label>
+              <input
+                type="text"
+                value={customLocation}
+                onChange={e => setCustomLocation(e.target.value)}
+                placeholder="Enter address or meeting link..."
+              />
+            </div>
+          )}
 
           <div className="modal-actions">
             <button type="button" onClick={onClose} className="btn-secondary">
@@ -299,6 +351,39 @@ export function CreateEventTypeModal({ isOpen, onClose, onSubmit }: CreateEventT
         }
         .btn-secondary:hover {
           background: var(--surface-hover);
+        }
+        .field-error {
+          display: block;
+          margin-top: 0.25rem;
+          font-size: 0.75rem;
+          color: var(--error);
+        }
+        .location-picker {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 0.5rem;
+        }
+        .location-btn {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.5rem 0.75rem;
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          background: var(--background);
+          color: var(--text-secondary);
+          font-size: 0.875rem;
+          cursor: pointer;
+          transition: all 0.15s;
+        }
+        .location-btn:hover {
+          border-color: var(--primary);
+          color: var(--text-primary);
+        }
+        .location-btn.selected {
+          border-color: var(--primary);
+          background: var(--primary-bg);
+          color: var(--primary);
         }
       `}</style>
     </div>
