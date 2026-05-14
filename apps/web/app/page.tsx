@@ -220,8 +220,8 @@ export default function Home() {
           <div className="container footer-inner">
             <span style={{ fontSize: '0.8125rem', color: '#9ca3af' }}>© 2024 Callroom</span>
             <div style={{ display: 'flex', gap: '1.5rem' }}>
-              {['Privacy', 'Terms', 'Contact'].map(l => (
-                <a key={l} href="#" style={{ fontSize: '0.8125rem', color: '#9ca3af', textDecoration: 'none' }}>{l}</a>
+              {['Privacy', 'Terms'].map(l => (
+                <Link key={l} href={`/${l.toLowerCase()}`} style={{ fontSize: '0.8125rem', color: '#9ca3af', textDecoration: 'none' }}>{l}</Link>
               ))}
             </div>
           </div>
